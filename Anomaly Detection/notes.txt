@@ -1,0 +1,75 @@
+CATATAN ANOMALY DETECTION - XGBoost
+=====================================
+
+HASIL MODEL
+-----------
+Best params  : subsample=1.0, 
+                n_estimators=300,
+                min_child_weight=1,
+                max_depth=8,
+                learning_rate=0.2,
+                colsample_bytree=0.8
+Best F1 CV   : 0.8733
+Accuracy train : 1.0
+Accuracy test  : 0.9877
+Precision      : 0.8444
+Recall Anomali : 0.9243
+F1 Anomali     : 0.8825
+AUC-ROC        : 0.9978
+
+
+YANG PERLU DIPERHATIKAN
+-----------------------
+1. OVERFITTING RINGAN
+   - Accuracy train = 1.0 (sempurna), test = 0.9877
+   - Selisihnya kecil tapi train sempurna adalah tanda peringatan
+   - Perlu diakui di laporan sebagai keterbatasan
+   - Bukti tambahan: model hampir selalu confident 99-100%, bahkan di input yang ambigu
+   - Penyebab: data besar (63k baris) + max_depth=8 + label Isolation Forest yang tegas
+     → model terlalu hafal pola, hampir tidak pernah ragu
+
+2. BUKAN GROUND TRUTH
+   - Model belajar dari label Isolation Forest, bukan label gempa anomali yang sebenarnya
+   - Accuracy 0.99 artinya "99% berhasil meniru Isolation Forest", bukan "99% benar mendeteksi anomali gempa"
+   - Wajib ditulis di laporan dengan jelas
+
+3. CONTAMINATION
+   - Catat contamination berapa yang akhirnya dipilih
+   - Nilai contamination menentukan seberapa banyak data dianggap anomali
+   - Subjektivitas model ada di sini — kenapa pilih nilai itu, bukan yang lain, harus bisa dijelaskan
+
+4. CASCADING ERROR
+   - Jika Isolation Forest salah menentukan label, XGBoost ikut salah
+   - Tidak ada cara membuktikan label Isolation Forest benar atau salah karena tidak ada ground truth
+
+5. SHAP
+   - Cek apakah fitur yang dominan adalah sifat fisik gempa (depth, latitude, longitude)
+   - atau justru kualitas pengukuran (nst, gap, dmin) seperti yang terjadi di model klasifikasi
+   - Jika kualitas pengukuran yang dominan, itu perlu diakui sebagai keterbatasan juga
+
+
+6. GEMPA BESAR TIDAK TERDETEKSI ANOMALI
+   - Model tidak pakai kolom mag, jadi gempa besar seperti Aceh 2004 tidak terdeteksi anomali
+   - Yang dideteksi adalah anomali karakteristik pengukuran (koordinat/depth/gap/dmin/nst)
+   - Harus diakui di laporan
+   - KEPUTUSAN: masukkan mag sebagai fitur atau biarkan? (mag aman dipakai di sini, bukan data leakage)
+
+7. DASAR DETEKSI ANOMALI
+   - Model mendeteksi anomali berdasarkan KOMBINASI FITUR yang tidak biasa, bukan magnitude
+   - Fitur: latitude, longitude, depth, gap, dmin, nst, bulan, jam
+   - Gempa anomali = gempa yang kombinasi fiturnya sulit masuk ke pola umum historis
+   - Contoh: koordinat jarang gempa, depth tidak umum untuk wilayah itu, gap/dmin/nst ekstrem
+   - mag tidak dipakai → gempa besar belum tentu anomali, gempa kecil bisa saja anomali
+
+YANG SUDAH SELESAI
+------------------
+- Contamination: 0.05 (3.171 anomali dari 63.414 data)
+- model_anomali.pkl dan scaler_anomali.pkl tersimpan
+- app.py endpoint /prediksi-anomali selesai
+- anomali.html selesai (4 tab: Input Manual, Gempa Historis, Dashboard, Timeline)
+- dashboard.json dan timeline.json di-generate dari seluruh data
+
+YANG BELUM DIKERJAKAN
+---------------------
+- Putuskan masukkan mag atau tidak (lihat poin 6)
+- SHAP analysis

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anomaly Detection Gempa</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: sans-serif; background: #0f0f0f; color: #fff; min-height: 100vh; }
+
+    #nav {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; display: flex; gap: 8px;
+    }
+    #nav a {
+      padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: opacity 0.2s;
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);
+    }
+    #nav a.active { background: #fff; color: #333; pointer-events: none; }
+    #nav a:not(.active):hover { opacity: 0.8; }
+
+    .tabs {
+      display: flex; border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 0 24px;
+    }
+    .tab {
+      padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600;
+      opacity: 0.4; border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .tab.active { opacity: 1; border-bottom-color: #fff; }
+
+    .tab-content { display: none; padding: 28px 24px 100px; max-width: 800px; margin: 0 auto; }
+    .tab-content.active { display: block; }
+
+    h1 { font-size: 20px; margin-bottom: 4px; }
+    .sub { font-size: 13px; opacity: 0.5; margin-bottom: 24px; }
+
+    /* FORM */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 11px; opacity: 0.5; text-transform: uppercase; }
+    .form-group input {
+      padding: 9px 11px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.07); color: #fff; font-size: 13px;
+    }
+    .form-group input:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+
+    .btn-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .btn {
+      padding: 9px 18px; border-radius: 6px; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600; transition: opacity 0.2s;
+    }
+    .btn-primary { background: #fff; color: #000; }
+    .btn-dummy { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .btn:hover { opacity: 0.8; }
+
+    #hasil-1, #hasil-2 { display: none; }
+    .hasil-box { padding: 18px; border-radius: 10px; text-align: center; margin-bottom: 14px; }
+    .hasil-box .status { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .hasil-box .detail { font-size: 12px; opacity: 0.6; }
+    .prob-section h4 { font-size: 11px; opacity: 0.5; margin-bottom: 8px; }
+    .prob-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+    .prob-bar-wrap { background: rgba(255,255,255,0.1); border-radius: 3px; height: 4px; margin-bottom: 7px; }
+    .prob-bar { height: 4px; border-radius: 3px; }
+
+    .select-group { margin-bottom: 18px; }
+    .select-group label { font-size: 11px; opacity: 0.5; text-transform: uppercase; display: block; margin-bottom: 7px; }
+    .select-group select {
+      width: 100%; padding: 9px 11px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.07); color: #fff; font-size: 13px;
+    }
+    select option { background: #1a1a1a; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .info-item { background: rgba(255,255,255,0.05); padding: 10px 12px; border-radius: 8px; }
+    .info-item .ilabel { font-size: 10px; opacity: 0.4; margin-bottom: 3px; }
+    .info-item .ivalue { font-size: 14px; font-weight: 600; }
+
+    /* DASHBOARD */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .stat-box { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 14px; text-align: center; }
+    .stat-box .sval { font-size: 24px; font-weight: 700; }
+    .stat-box .slabel { font-size: 11px; opacity: 0.5; margin-top: 4px; }
+
+    .filter-row { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
+    .filter-row label { font-size: 12px; opacity: 0.5; }
+    .filter-row select {
+      padding: 6px 10px; border-radius: 5px; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 12px;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead tr { border-bottom: 1px solid rgba(255,255,255,0.1); }
+    th { padding: 8px 10px; text-align: left; opacity: 0.4; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+    td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+    .badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .badge-anomali { background: rgba(204,0,0,0.3); color: #ff6666; }
+    .badge-normal  { background: rgba(51,136,255,0.2); color: #66aaff; }
+
+    /* TIMELINE */
+    .chart-wrap { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .chart-wrap h3 { font-size: 13px; opacity: 0.6; margin-bottom: 12px; }
+
+    #loading, #loading-2 { display: none; text-align: center; opacity: 0.5; font-size: 12px; padding: 16px; }
+  </style>
+</head>
+<body>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(1)">Input Manual</div>
+    <div class="tab" onclick="switchTab(2)">Gempa Historis</div>
+    <div class="tab" onclick="switchTab(3)">Dashboard</div>
+    <div class="tab" onclick="switchTab(4)">Timeline</div>
+  </div>
+
+  <!-- TAB 1: INPUT MANUAL -->
+  <div class="tab-content active" id="tab-1">
+    <br><h1>Deteksi Anomali Gempa</h1>
+    <p class="sub">Masukkan karakteristik gempa untuk mendeteksi apakah termasuk anomali</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Latitude</label><input type="number" id="lat" step="0.001" placeholder="-6.200" /></div>
+      <div class="form-group"><label>Longitude</label><input type="number" id="lon" step="0.001" placeholder="106.816" /></div>
+      <div class="form-group"><label>Depth (km)</label><input type="number" id="depth" step="0.1" placeholder="10" /></div>
+      <div class="form-group"><label>Gap (derajat)</label><input type="number" id="gap" step="0.1" placeholder="150" /></div>
+      <div class="form-group"><label>Dmin</label><input type="number" id="dmin" step="0.001" placeholder="1.5" /></div>
+      <div class="form-group"><label>NST</label><input type="number" id="nst" step="1" placeholder="20" /></div>
+      <div class="form-group"><label>Bulan (1–12)</label><input type="number" id="bulan" min="1" max="12" placeholder="12" /></div>
+      <div class="form-group"><label>Jam (0–23)</label><input type="number" id="jam" min="0" max="23" placeholder="0" /></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="prediksiManual()">Deteksi</button>
+      <button class="btn btn-dummy" onclick="isiDummyNormal()">Normal (dummy)</button>
+      <button class="btn btn-dummy" onclick="isiDummyAnomali()">Anomali (dummy)</button>
+      <button class="btn btn-dummy" onclick="isiRandom()">Random</button>
+    </div>
+    <div id="loading">Memproses...</div>
+    <div id="hasil-1">
+      <div class="hasil-box" id="hasil-box-1">
+        <div class="status" id="status-1"></div>
+        <div class="detail" id="detail-1"></div>
+      </div>
+      <div class="prob-section"><h4>Probabilitas</h4><div id="prob-1"></div></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: GEMPA HISTORIS -->
+  <div class="tab-content" id="tab-2">
+    <br><h1>Gempa Historis</h1>
+    <p class="sub">Pilih gempa besar bersejarah dan lihat apakah model mendeteksinya sebagai anomali</p>
+    <div class="select-group">
+      <label>Pilih Gempa</label>
+      <select id="gempa-select" onchange="pilihGempa()">
+        <option value="">-- Pilih gempa --</option>
+        <option value="9.1|3.295|95.982|30|2004|12">Aceh 2004 — M 9.1</option>
+        <option value="8.6|2.085|97.108|30|2005|3">Nias 2005 — M 8.6</option>
+        <option value="8.4|-4.438|101.367|34|2007|9">Bengkulu 2007 — M 8.4</option>
+        <option value="7.9|0.729|119.931|24|1996|1">Palu 1996 — M 7.9</option>
+        <option value="7.8|-8.48|121.896|27.7|1992|12">Flores 1992 — M 7.8</option>
+      </select>
+    </div>
+    <div id="loading-2">Memproses...</div>
+    <div id="hasil-2">
+      <div class="info-grid">
+        <div class="info-item"><div class="ilabel">Magnitudo</div><div class="ivalue" id="h-mag"></div></div>
+        <div class="info-item"><div class="ilabel">Kedalaman</div><div class="ivalue" id="h-depth"></div></div>
+        <div class="info-item"><div class="ilabel">Koordinat</div><div class="ivalue" id="h-coord"></div></div>
+        <div class="info-item"><div class="ilabel">Tahun</div><div class="ivalue" id="h-tahun"></div></div>
+      </div>
+      <div class="hasil-box" id="hasil-box-2">
+        <div class="status" id="status-2"></div>
+        <div class="detail" id="detail-2"></div>
+      </div>
+      <div class="prob-section"><h4>Probabilitas</h4><div id="prob-2"></div></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: DASHBOARD -->
+  <div class="tab-content" id="tab-3">
+    <br><h1>Dashboard Monitoring</h1>
+    <p class="sub">200 gempa terbaru (2020–2026) yang sudah diklasifikasikan oleh model</p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="sval" id="d-total">—</div><div class="slabel">Total Gempa</div></div>
+      <div class="stat-box"><div class="sval" style="color:#ff6666" id="d-anomali">—</div><div class="slabel">Anomali</div></div>
+      <div class="stat-box"><div class="sval" style="color:#66aaff" id="d-normal">—</div><div class="slabel">Normal</div></div>
+    </div>
+    <div class="filter-row">
+      <label>Filter:</label>
+      <select onchange="filterDashboard(this.value)">
+        <option value="semua">Semua</option>
+        <option value="anomali">Anomali saja</option>
+        <option value="normal">Normal saja</option>
+      </select>
+    </div>
+    <table id="tabel-dashboard">
+      <thead><tr><th>Waktu</th><th>Mag</th><th>Depth</th><th>Lokasi</th><th>Status</th><th>Skor</th></tr></thead>
+      <tbody id="tbody-dashboard"></tbody>
+    </table>
+  </div>
+
+  <!-- TAB 4: TIMELINE -->
+  <div class="tab-content" id="tab-4">
+    <br><h1>Anomali Score Timeline</h1>
+    <p class="sub">Pola anomali gempa Indonesia dari 1990 hingga 2026</p>
+    <div class="chart-wrap">
+      <h3>Jumlah Anomali per Tahun</h3>
+      <canvas id="chart-anomali" height="120"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <h3>Rata-rata Skor Anomali per Tahun (%)</h3>
+      <canvas id="chart-skor" height="120"></canvas>
+    </div>
+    <div class="chart-wrap">
+      <h3>Persentase Anomali vs Normal per Tahun</h3>
+      <canvas id="chart-persen" height="120"></canvas>
+    </div>
+  </div>
+
+  <div id="nav">
+    <a href="map.html">Peta</a>
+    <a href="heatmap.html">Heatmap</a>
+    <a href="prediksi.html">Prediksi Bahaya</a>
+    <a href="anomali.html" class="active">Anomali</a>
+  </div>
+
+  <script>
+    let dashboardData = [];
+    let timelineData  = [];
+    let dashboardLoaded = false;
+    let timelineLoaded  = false;
+
+    function switchTab(n) {
+      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === n - 1));
+      document.querySelectorAll('.tab-content').forEach((t, i) => t.classList.toggle('active', i === n - 1));
+      if (n === 3 && !dashboardLoaded) loadDashboard();
+      if (n === 4 && !timelineLoaded)  loadTimeline();
+    }
+
+    // ── TAB 1 ──
+    function isiDummyNormal() {
+      document.getElementById('lat').value = -6.200; document.getElementById('lon').value = 106.816;
+      document.getElementById('depth').value = 10;   document.getElementById('gap').value = 150;
+      document.getElementById('dmin').value = 1.5;   document.getElementById('nst').value = 20;
+      document.getElementById('bulan').value = 6;    document.getElementById('jam').value = 10;
+    }
+    function isiDummyAnomali() {
+      document.getElementById('lat').value = 3.295;  document.getElementById('lon').value = 95.982;
+      document.getElementById('depth').value = 30;   document.getElementById('gap').value = 50;
+      document.getElementById('dmin').value = 0.5;   document.getElementById('nst').value = 80;
+      document.getElementById('bulan').value = 12;   document.getElementById('jam').value = 0;
+    }
+    function rand(min, max, dec=2) { return parseFloat((Math.random()*(max-min)+min).toFixed(dec)); }
+    function isiRandom() {
+      document.getElementById('lat').value   = rand(-11, 6);
+      document.getElementById('lon').value   = rand(95, 141);
+      document.getElementById('depth').value = rand(1, 650, 1);
+      document.getElementById('gap').value   = rand(30, 300, 1);
+      document.getElementById('dmin').value  = rand(0.1, 10, 3);
+      document.getElementById('nst').value   = Math.floor(rand(5, 100));
+      document.getElementById('bulan').value = Math.floor(rand(1, 12));
+      document.getElementById('jam').value   = Math.floor(rand(0, 23));
+    }
+
+    async function prediksiManual() {
+      const body = {
+        lat: parseFloat(document.getElementById('lat').value),
+        lon: parseFloat(document.getElementById('lon').value),
+        depth: parseFloat(document.getElementById('depth').value),
+        gap: parseFloat(document.getElementById('gap').value) || null,
+        dmin: parseFloat(document.getElementById('dmin').value) || null,
+        nst: parseFloat(document.getElementById('nst').value) || null,
+        bulan: parseInt(document.getElementById('bulan').value),
+        jam: parseInt(document.getElementById('jam').value),
+      };
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('hasil-1').style.display = 'none';
+      try {
+        const res = await fetch('http://127.0.0.1:5000/prediksi-anomali', {
+          method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+        });
+        tampilHasil(await res.json(), '1', body.lat, body.lon);
+      } catch { alert('Tidak bisa terhubung ke server. Pastikan app.py sudah dijalankan.'); }
+      finally { document.getElementById('loading').style.display = 'none'; }
+    }
+
+    // ── TAB 2 ──
+    async function pilihGempa() {
+      const val = document.getElementById('gempa-select').value;
+      if (!val) return;
+      const [mag, lat, lon, depth, tahun, bulan] = val.split('|');
+      document.getElementById('h-mag').textContent   = `M ${mag}`;
+      document.getElementById('h-depth').textContent = `${depth} km`;
+      document.getElementById('h-coord').textContent = `${lat}, ${lon}`;
+      document.getElementById('h-tahun').textContent = tahun;
+      document.getElementById('loading-2').style.display = 'block';
+      document.getElementById('hasil-2').style.display = 'none';
+      try {
+        const res = await fetch('http://127.0.0.1:5000/prediksi-anomali', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({lat: parseFloat(lat), lon: parseFloat(lon),
+                                depth: parseFloat(depth), bulan: parseInt(bulan), jam: 0})
+        });
+        tampilHasil(await res.json(), '2', lat, lon);
+      } catch { alert('Tidak bisa terhubung ke server.'); }
+      finally { document.getElementById('loading-2').style.display = 'none'; }
+    }
+
+    function tampilHasil(data, suffix, lat, lon) {
+      const box = document.getElementById(`hasil-box-${suffix}`);
+      box.style.background = data.kelas === 1 ? 'rgba(204,0,0,0.2)' : 'rgba(51,136,255,0.2)';
+      document.getElementById(`status-${suffix}`).textContent = data.label;
+      document.getElementById(`status-${suffix}`).style.color = data.warna;
+      document.getElementById(`detail-${suffix}`).textContent = `Lat: ${lat} | Lon: ${lon}`;
+      const probEl = document.getElementById(`prob-${suffix}`);
+      probEl.innerHTML = '';
+      for (const [nama, pct] of Object.entries(data.probabilitas)) {
+        probEl.innerHTML += `
+          <div class="prob-row"><span>${nama}</span><span>${pct}%</span></div>
+          <div class="prob-bar-wrap"><div class="prob-bar" style="width:${pct}%;background:${nama==='Anomali'?'#cc0000':'#3388ff'}"></div></div>`;
+      }
+      document.getElementById(`hasil-${suffix}`).style.display = 'block';
+    }
+
+    // ── TAB 3: DASHBOARD ──
+    async function loadDashboard() {
+      const res = await fetch('data/dashboard.json');
+      dashboardData = await res.json();
+      dashboardLoaded = true;
+      const anomali = dashboardData.filter(d => d.kelas === 1).length;
+      document.getElementById('d-total').textContent   = dashboardData.length;
+      document.getElementById('d-anomali').textContent = anomali;
+      document.getElementById('d-normal').textContent  = dashboardData.length - anomali;
+      renderTabel(dashboardData);
+    }
+
+    function filterDashboard(filter) {
+      if (filter === 'anomali') renderTabel(dashboardData.filter(d => d.kelas === 1));
+      else if (filter === 'normal') renderTabel(dashboardData.filter(d => d.kelas === 0));
+      else renderTabel(dashboardData);
+    }
+
+    function renderTabel(data) {
+      const tbody = document.getElementById('tbody-dashboard');
+      tbody.innerHTML = '';
+      data.forEach(d => {
+        const badge = d.kelas === 1
+          ? `<span class="badge badge-anomali">Anomali</span>`
+          : `<span class="badge badge-normal">Normal</span>`;
+        tbody.innerHTML += `
+          <tr>
+            <td>${d.time}</td>
+            <td>M ${d.mag}</td>
+            <td>${d.depth} km</td>
+            <td>${d.place}</td>
+            <td>${badge}</td>
+            <td>${d.proba}%</td>
+          </tr>`;
+      });
+    }
+
+    // ── TAB 4: TIMELINE ──
+    async function loadTimeline() {
+      const res = await fetch('data/timeline.json');
+      timelineData = await res.json();
+      timelineLoaded = true;
+
+      const labels  = timelineData.map(d => d.tahun);
+      const anomali = timelineData.map(d => d.anomali);
+      const skor    = timelineData.map(d => d.skor);
+      const persen  = timelineData.map(d => parseFloat(((d.anomali / d.total) * 100).toFixed(1)));
+
+      const opt = { responsive: true, plugins: { legend: { display: false } },
+                    scales: { x: { ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                              y: { ticks: { color: '#888' }, grid: { color: 'rgba(255,255,255,0.05)' } } } };
+
+      new Chart(document.getElementById('chart-anomali'), {
+        type: 'bar',
+        data: { labels, datasets: [{ data: anomali, backgroundColor: 'rgba(204,0,0,0.6)', borderColor: '#cc0000', borderWidth: 1 }] },
+        options: opt
+      });
+      new Chart(document.getElementById('chart-skor'), {
+        type: 'line',
+        data: { labels, datasets: [{ data: skor, borderColor: '#ff6666', backgroundColor: 'rgba(204,0,0,0.1)', fill: true, tension: 0.3, pointRadius: 3 }] },
+        options: opt
+      });
+      new Chart(document.getElementById('chart-persen'), {
+        type: 'bar',
+        data: { labels, datasets: [
+          { label: 'Anomali %', data: persen, backgroundColor: 'rgba(204,0,0,0.6)' },
+          { label: 'Normal %',  data: timelineData.map(d => parseFloat((100 - (d.anomali/d.total)*100).toFixed(1))), backgroundColor: 'rgba(51,136,255,0.4)' }
+        ]},
+        options: { ...opt, plugins: { legend: { display: true, labels: { color: '#aaa' } } }, scales: { ...opt.scales, x: { ...opt.scales.x, stacked: true }, y: { ...opt.scales.y, stacked: true } } }
+      });
+    }
+  </script>
+</body>
+</html>

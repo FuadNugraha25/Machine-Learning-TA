@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peta</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: sans-serif; }
+    #map { height: 100vh; width: 100%; }
+    #nav {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; display: flex; gap: 8px;
+    }
+    #nav a {
+      padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: opacity 0.2s;
+    }
+    #nav a.active {
+      background: #fff; color: #333; pointer-events: none;
+    }
+    #nav a:not(.active) {
+      background: rgba(255,255,255,0.25); color: #fff;
+      border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(4px);
+    }
+    #nav a:not(.active):hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="nav">
+    <a href="map.html" class="active">Peta</a>
+    <a href="heatmap.html">Heatmap Gempa</a>
+    <a href="prediksi.html">Prediksi</a>
+    <a href="anomali.html">Anomali</a>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([-6.2088, 106.8456], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+  </script>
+</body>
+</html>

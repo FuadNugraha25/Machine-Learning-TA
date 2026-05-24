@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prediksi Tingkat Bahaya Gempa</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: sans-serif; }
+    #map { height: 100vh; width: 100%; cursor: crosshair; }
+
+    #panel {
+      position: absolute; top: 16px; right: 16px; z-index: 1000;
+      background: rgba(15, 15, 15, 0.85); color: #fff;
+      padding: 16px 18px; border-radius: 10px; width: 230px;
+      backdrop-filter: blur(6px);
+    }
+    #panel h3 { font-size: 14px; margin-bottom: 12px; opacity: 0.85; }
+
+
+    #hint {
+      font-size: 11px; opacity: 0.5; text-align: center;
+      margin-bottom: 10px; line-height: 1.5;
+    }
+
+    #hasil {
+      display: none; margin-top: 12px; padding: 12px;
+      border-radius: 8px; text-align: center;
+    }
+    #hasil .kelas { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    #hasil .koordinat { font-size: 10px; opacity: 0.6; margin-bottom: 10px; }
+    #hasil .prob-title { font-size: 10px; opacity: 0.5; margin-bottom: 6px; }
+    .prob-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+    .prob-bar-wrap { width: 100%; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 3px; height: 4px; }
+    .prob-bar { height: 4px; border-radius: 3px; background: #fff; }
+
+    #loading { display: none; text-align: center; font-size: 12px; opacity: 0.6; margin-top: 10px; }
+
+    #nav {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; display: flex; gap: 8px;
+    }
+    #nav a {
+      padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: opacity 0.2s;
+    }
+    #nav a.active {
+      background: #fff; color: #333; pointer-events: none;
+    }
+    #nav a:not(.active) {
+      background: rgba(255,255,255,0.25); color: #fff;
+      border: 1px solid rgba(255,255,255,0.5); backdrop-filter: blur(4px);
+    }
+    #nav a:not(.active):hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div id="panel">
+    <h3>Prediksi Tingkat Bahaya</h3>
+    <p id="hint">Klik titik mana saja di peta untuk mendapat prediksi</p>
+    <p style="font-size:10px; opacity:0.4; text-align:center; margin-bottom:8px;">Kedalaman default: 10 km &bull; Batas bahaya: mag 5.0</p>
+
+    <div id="loading">Memproses...</div>
+
+    <div id="hasil">
+      <div class="kelas" id="kelas-label">—</div>
+      <div class="koordinat" id="kelas-koordinat"></div>
+      <div class="prob-title">Probabilitas per kelas</div>
+      <div id="prob-list"></div>
+    </div>
+  </div>
+
+  <div id="nav">
+    <a href="map.html">Peta</a>
+    <a href="heatmap.html">Heatmap Gempa</a>
+    <a href="prediksi.html" class="active">Prediksi</a>
+    <a href="anomali.html">Anomali</a>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([-2.5, 118], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    let marker = null;
+
+    map.on('click', async (e) => {
+      const { lat, lng } = e.latlng;
+      const depth = 10;
+
+      if (marker) map.removeLayer(marker);
+      marker = L.circleMarker([lat, lng], {
+        radius: 8, color: '#fff', weight: 2,
+        fillColor: '#888', fillOpacity: 0.8
+      }).addTo(map);
+
+      document.getElementById('hasil').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+
+      try {
+        const res = await fetch('http://127.0.0.1:5000/prediksi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon: lng, depth })
+        });
+        const data = await res.json();
+
+        marker.setStyle({ fillColor: data.warna });
+        marker.bindPopup(`<b>${data.label}</b><br>${lat.toFixed(4)}, ${lng.toFixed(4)}`).openPopup();
+
+        document.getElementById('kelas-label').textContent = data.label;
+        document.getElementById('kelas-label').style.color = data.warna;
+        document.getElementById('kelas-koordinat').textContent =
+          `${lat.toFixed(4)}, ${lng.toFixed(4)} | kedalaman: 10 km (default)`;
+
+        const probList = document.getElementById('prob-list');
+        probList.innerHTML = '';
+        for (const [nama, pct] of Object.entries(data.probabilitas)) {
+          probList.innerHTML += `
+            <div class="prob-row"><span>${nama}</span><span>${pct}%</span></div>
+            <div class="prob-bar-wrap"><div class="prob-bar" style="width:${pct}%"></div></div>
+          `;
+        }
+
+        document.getElementById('hasil').style.backgroundColor = data.warna + '33';
+        document.getElementById('hasil').style.display = 'block';
+      } catch {
+        alert('Tidak bisa terhubung ke server. Pastikan app.py sudah dijalankan.');
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
