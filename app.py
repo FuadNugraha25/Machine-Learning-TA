@@ -61,10 +61,10 @@ def prediksi_anomali():
     nst_val  = nst  if nst  is not None else 20.0
 
     fitur = np.array([[lat, lon, depth, gap_val, dmin_val, nst_val, bulan, jam]])
+    fitur_scaled = scaler_anomali.transform(fitur)
 
-    # XGBoost ditraining tanpa scaling — jangan di-scale
-    kelas = int(model_anomali.predict(fitur)[0])
-    proba = model_anomali.predict_proba(fitur)[0].tolist()
+    kelas = int(model_anomali.predict(fitur_scaled)[0])
+    proba = model_anomali.predict_proba(fitur_scaled)[0].tolist()
 
     return jsonify({
         'kelas': kelas,

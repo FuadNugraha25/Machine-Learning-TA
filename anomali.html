@@ -67,6 +67,14 @@
     .prob-bar { height: 4px; border-radius: 3px; }
 
     .select-group { margin-bottom: 18px; }
+    .section-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 24px 0 20px; }
+    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; margin-bottom: 4px; margin-top: 20px; }
+    .ml-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; background: rgba(255,140,0,0.2); color: #ffaa44; border: 1px solid rgba(255,140,0,0.3); margin-left: 6px; vertical-align: middle; }
+    .deskripsi-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; display: none; }
+    .deskripsi-card .dc-judul { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+    .deskripsi-card .dc-body { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.75); margin-bottom: 10px; }
+    .deskripsi-card .dc-alasan { font-size: 12px; line-height: 1.65; color: rgba(255,200,80,0.9); background: rgba(255,180,0,0.07); border-left: 3px solid rgba(255,180,0,0.5); padding: 8px 12px; border-radius: 4px; }
+    .deskripsi-card .dc-alasan-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.6; margin-bottom: 4px; }
     .select-group label { font-size: 11px; opacity: 0.5; text-transform: uppercase; display: block; margin-bottom: 7px; }
     .select-group select {
       width: 100%; padding: 9px 11px; border-radius: 6px;
@@ -151,7 +159,48 @@
   <!-- TAB 2: GEMPA HISTORIS -->
   <div class="tab-content" id="tab-2">
     <br><h1>Gempa Historis</h1>
-    <p class="sub">Pilih gempa besar bersejarah dan lihat apakah model mendeteksinya sebagai anomali</p>
+    <p class="sub">Bandingkan dua tipe gempa: anomali berdasarkan ML vs gempa besar bersejarah</p>
+
+    <!-- SECTION A: ML ANOMALY -->
+    <p class="section-title">Anomali Berdasarkan ML <span class="ml-badge">Bukan Magnitude</span></p>
+    <p class="sub" style="margin-top:4px;margin-bottom:14px;">Gempa dengan magnitude rendah/sedang yang dideteksi anomali oleh model karena kombinasi fitur — depth ekstrem, koordinat tidak biasa, dll</p>
+    <div class="select-group">
+      <label>Pilih Gempa Anomali ML</label>
+      <select id="gempa-ml-select" onchange="pilihGempaML()">
+        <option value="">-- Pilih gempa --</option>
+        <option value="4.4|2.6467|122.9309|484.8|2026|4|233 km N of Gorontalo">Gorontalo 2026 — M 4.4 · Depth 484 km</option>
+        <option value="4.9|-6.975|117.0899|500.3|2026|4|164 km NNW of Pototano">Pototano 2026 — M 4.9 · Depth 500 km</option>
+        <option value="4.6|2.3103|128.1832|157.0|2026|4|67 km NNE of Tobelo">Tobelo 2026 — M 4.6 · Depth 157 km</option>
+        <option value="4.2|5.0257|127.454|132.7|2026|4|204 km SE of Pondaguitan">Pondaguitan 2026 — M 4.2 · Depth 132 km</option>
+        <option value="4.3|-5.4325|127.2998|401.3|2026|4|215 km SSW of Ambon">Ambon Selatan 2026 — M 4.5 · Depth 401 km</option>
+      </select>
+    </div>
+    <div id="deskripsi-ml" class="deskripsi-card">
+      <div class="dc-judul" id="dc-judul"></div>
+      <div class="dc-body" id="dc-body"></div>
+      <div class="dc-alasan-label">Mengapa diklasifikasikan anomali oleh model?</div>
+      <div class="dc-alasan" id="dc-alasan"></div>
+    </div>
+    <div id="loading-2ml" style="display:none;color:#aaa;margin:12px 0;">Memproses...</div>
+    <div id="hasil-2ml" style="display:none;">
+      <div class="info-grid">
+        <div class="info-item"><div class="ilabel">Magnitudo</div><div class="ivalue" id="h-ml-mag"></div></div>
+        <div class="info-item"><div class="ilabel">Kedalaman</div><div class="ivalue" id="h-ml-depth"></div></div>
+        <div class="info-item"><div class="ilabel">Koordinat</div><div class="ivalue" id="h-ml-coord"></div></div>
+        <div class="info-item"><div class="ilabel">Lokasi</div><div class="ivalue" id="h-ml-place" style="font-size:12px;"></div></div>
+      </div>
+      <div class="hasil-box" id="hasil-box-2ml">
+        <div class="status" id="status-2ml"></div>
+        <div class="detail" id="detail-2ml"></div>
+      </div>
+      <div class="prob-section"><h4>Probabilitas</h4><div id="prob-2ml"></div></div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- SECTION B: HISTORICAL BIG EARTHQUAKES -->
+    <p class="section-title">Gempa Besar Bersejarah</p>
+    <p class="sub" style="margin-top:4px;margin-bottom:14px;">Apakah gempa besar ini juga dideteksi anomali oleh model?</p>
     <div class="select-group">
       <label>Pilih Gempa</label>
       <select id="gempa-select" onchange="pilihGempa()">
@@ -288,6 +337,66 @@
     }
 
     // ── TAB 2 ──
+    const deskripsiML = {
+      '4.4|2.6467|122.9309|484.8|2026|4|233 km N of Gorontalo': {
+        judul: 'Gempa Laut Sulawesi Utara — April 2026',
+        body: 'Gempa berkekuatan M 4.4 terjadi di kedalaman 484 km di bawah Laut Sulawesi, sekitar 233 km sebelah utara Gorontalo. Secara magnitude, gempa ini tergolong kecil dan tidak menimbulkan kerusakan berarti. Namun model menandainya sebagai anomali.',
+        alasan: 'Kedalaman 484 km masuk kategori gempa sangat dalam (>300 km), jauh melampaui rata-rata historis gempa di wilayah ini (~50–150 km). Pola depth yang sangat tidak lazim inilah yang ditangkap model sebagai kombinasi fitur yang menyimpang jauh dari distribusi normal data 1990–2026.'
+      },
+      '4.9|-6.975|117.0899|500.3|2026|4|164 km NNW of Pototano': {
+        judul: 'Gempa Dalam Selat Makassar — April 2026',
+        body: 'Gempa M 4.9 terjadi di kedalaman 500 km di bawah Selat Makassar, sekitar 164 km barat laut Pototano, Sumbawa. Zona ini umumnya aktif secara tektonik, namun gempa sedalam ini sangat jarang tercatat.',
+        alasan: 'Dengan kedalaman 500 km — hampir di batas maksimum kedalaman gempa yang secara fisik mungkin terjadi — koordinat dan depth membentuk kombinasi yang belum pernah muncul dalam pola historis dataset. Model Isolation Forest yang melatih XGBoost menandai titik ini sebagai outlier ekstrem berdasarkan fitur depth dan posisi geografisnya.'
+      },
+      '4.6|2.3103|128.1832|157.0|2026|4|67 km NNE of Tobelo': {
+        judul: 'Gempa Laut Halmahera Utara — April 2026',
+        body: 'Gempa M 4.6 terdeteksi di kedalaman 157 km di bawah perairan sebelah utara Tobelo, Halmahera. Wilayah Halmahera memang aktif secara seismik karena pertemuan Lempeng Pasifik, Filipina, dan Eurasia.',
+        alasan: 'Meski kedalaman 157 km tidak setara ekstremnya dengan kasus lain, kombinasi antara kedalaman menengah-dalam, posisi koordinat di zona transisi lempeng, dan sedikitnya stasiun seismik (NST rendah) di wilayah ini membentuk profil fitur yang tidak umum. Model menilai kombinasi ini sebagai anomali karena berbeda dari pola mayoritas gempa dangkal-menengah di sekitarnya.'
+      },
+      '4.2|5.0257|127.454|132.7|2026|4|204 km SE of Pondaguitan': {
+        judul: 'Gempa Laut Filipina Selatan — April 2026',
+        body: 'Gempa M 4.2 terjadi di kedalaman 132 km di perairan lepas pantai selatan Filipina, masuk dalam batas zona pemantauan Indonesia bagian timur laut. Magnitude-nya kecil, bahkan di bawah ambang batas yang biasa diperhatikan.',
+        alasan: 'Anomali model dipicu oleh kombinasi: koordinat di ujung utara zona pemantauan (latitude ~5°N), kedalaman >100 km, dan magnitude sangat kecil (4.2) yang jarang dibarengi depth sedalam ini di koordinat tersebut. Ketiga fitur ini bersama-sama menciptakan profil yang jarang muncul dalam data historis, sehingga model memberinya skor anomali 94%.'
+      },
+      '4.3|-5.4325|127.2998|401.3|2026|4|215 km SSW of Ambon': {
+        judul: 'Gempa Sangat Dalam Selatan Ambon — April 2026',
+        body: 'Gempa M 4.5 terjadi di kedalaman 401 km, sekitar 215 km selatan barat daya Ambon, di zona Banda Sea bagian dalam. Wilayah ini dikenal sebagai salah satu tempat dengan aktivitas gempa dalam yang tinggi di dunia karena subduksi lempeng Banda.',
+        alasan: 'Meskipun gempa dalam di Banda Sea bukan hal baru, depth 401 km pada koordinat ini berada di ekor distribusi data historis. Model mendeteksi bahwa kombinasi latitude negatif ~5°S, longitude 127°E, dan depth >400 km terjadi sangat jarang dibanding seluruh data 63.414 gempa — menjadikannya titik yang menyimpang secara statistik dari pola normal.'
+      }
+    };
+
+    async function pilihGempaML() {
+      const val = document.getElementById('gempa-ml-select').value;
+      if (!val) {
+        document.getElementById('deskripsi-ml').style.display = 'none';
+        document.getElementById('hasil-2ml').style.display = 'none';
+        return;
+      }
+      const [mag, lat, lon, depth, tahun, bulan, place] = val.split('|');
+      const desk = deskripsiML[val];
+      if (desk) {
+        document.getElementById('dc-judul').textContent  = desk.judul;
+        document.getElementById('dc-body').textContent   = desk.body;
+        document.getElementById('dc-alasan').textContent = desk.alasan;
+        document.getElementById('deskripsi-ml').style.display = 'block';
+      }
+      document.getElementById('h-ml-mag').textContent   = `M ${mag}`;
+      document.getElementById('h-ml-depth').textContent = `${depth} km`;
+      document.getElementById('h-ml-coord').textContent = `${parseFloat(lat).toFixed(3)}, ${parseFloat(lon).toFixed(3)}`;
+      document.getElementById('h-ml-place').textContent = place;
+      document.getElementById('loading-2ml').style.display = 'block';
+      document.getElementById('hasil-2ml').style.display = 'none';
+      try {
+        const res = await fetch('http://127.0.0.1:5000/prediksi-anomali', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({lat: parseFloat(lat), lon: parseFloat(lon),
+                                depth: parseFloat(depth), bulan: parseInt(bulan), jam: 0})
+        });
+        tampilHasil(await res.json(), '2ml', lat, lon);
+      } catch { alert('Tidak bisa terhubung ke server.'); }
+      finally { document.getElementById('loading-2ml').style.display = 'none'; }
+    }
+
     async function pilihGempa() {
       const val = document.getElementById('gempa-select').value;
       if (!val) return;

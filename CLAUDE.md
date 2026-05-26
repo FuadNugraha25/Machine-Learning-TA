@@ -150,6 +150,8 @@ Perbandingan Drop Kolom vs Imputasi Median menggunakan XGBoost klasifikasi:
 - **Fitur waktu** (`bulan`, `jam`) wajib dibuat dari `df` asli sebelum `dropna()` untuk menghindari index mismatch
 - **Kolom `mag` dilarang sebagai fitur** — data leakage
 - **Setiap ganti skema label** di notebook wajib diikuti update `app.py`
+- **JANGAN langsung edit notebook (.ipynb)** — user adalah mahasiswa TA yang harus bisa presentasikan perubahannya sendiri. Cukup jelaskan apa yang perlu diubah dan tunjukkan kode yang harus ditulis, biarkan user yang mengetik dan menjalankan sendiri
+- **app.py boleh diedit langsung** — user mengizinkan perubahan langsung pada app.py
 
 ---
 
