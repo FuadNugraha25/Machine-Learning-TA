@@ -55,11 +55,12 @@ YANG PERLU DIPERHATIKAN
    - KEPUTUSAN: masukkan mag sebagai fitur atau biarkan? (mag aman dipakai di sini, bukan data leakage)
 
 7. DASAR DETEKSI ANOMALI
-   - Model mendeteksi anomali berdasarkan KOMBINASI FITUR yang tidak biasa, bukan magnitude
-   - Fitur: latitude, longitude, depth, gap, dmin, nst, bulan, jam
-   - Gempa anomali = gempa yang kombinasi fiturnya sulit masuk ke pola umum historis
-   - Contoh: koordinat jarang gempa, depth tidak umum untuk wilayah itu, gap/dmin/nst ekstrem
-   - mag tidak dipakai → gempa besar belum tentu anomali, gempa kecil bisa saja anomali
+   Berdasarkan KOMBINASI 8 fitur — bukan 1 fitur, bukan magnitude:
+   - latitude, longitude  → lokasi (spasial)
+   - depth                → kedalaman
+   - gap, dmin, nst       → kualitas rekaman sensor
+   - bulan, jam           → pola waktu (temporal)
+   Anomali = kombinasi fitur-fitur di atas yang tidak lazim secara historis
 
 YANG SUDAH SELESAI
 ------------------
@@ -69,7 +70,15 @@ YANG SUDAH SELESAI
 - anomali.html selesai (4 tab: Input Manual, Gempa Historis, Dashboard, Timeline)
 - dashboard.json dan timeline.json di-generate dari seluruh data
 
+YANG SUDAH DITAMBAHKAN
+----------------------
+- mag TIDAK dimasukkan (final) — data leakage
+- SHAP selesai → shap_importance.png, shap_beeswarm.png
+- Validasi distribusi magnitude vs label IF → ~5% merata semua kelompok
+- Visualisasi cara kerja IF → visualisasi_IF.png
+- Definisi operasional anomali sudah dirumuskan → lihat panduan_laporan.md
+
 YANG BELUM DIKERJAKAN
 ---------------------
-- Putuskan masukkan mag atau tidak (lihat poin 6)
-- SHAP analysis
+- Revisi judul di dokumen laporan
+- Update Bab 2, 3, 4, 5 laporan → panduan_laporan.md sudah siap

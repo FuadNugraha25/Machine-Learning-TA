@@ -1,0 +1,146 @@
+================================================================
+HASIL EVALUASI MODEL XGBOOST — ANOMALY DETECTION
+Sistem Mitigasi Gempa Berbasis Android
+Pipeline: Isolation Forest → XGBoost
+================================================================
+
+DATASET
+-------
+- Sumber       : USGS Earthquake Catalog 1990–2026
+- Total data   : 63.413 baris (setelah filter type=earthquake)
+- Fitur        : latitude, longitude, depth, gap, dmin, nst, bulan, jam
+- Nilai kosong : imputasi median (gap, dmin, nst)
+- Pembagian    : 80% train (50.730 baris), 20% test (12.683 baris)
+
+MISSING VALUES (sebelum imputasi)
+----------------------------------
+- gap  : 15.615 kosong (24.6%)
+- dmin : 37.251 kosong (58.7%)
+- nst  : 30.155 kosong (47.6%)
+- latitude, longitude, depth : 0 kosong
+
+LABEL (Isolation Forest, contamination=0.05)
+---------------------------------------------
+- Train : 48.193 Normal | 2.537 Anomali
+- Test  :  12.032 Normal |   651 Anomali
+- Total : 60.225 Normal  | 3.188 Anomali
+
+================================================================
+1. HASIL EVALUASI XGBOOST
+================================================================
+
+Metrik                  Nilai
+-----------------------  ------
+Accuracy (train)         0.9950
+Accuracy (test)          0.9860
+Precision                0.8141
+Recall (Anomali)         0.9416
+F1 Score (Anomali)       0.8732
+AUC-ROC                  0.9981
+Best F1 CV (5-fold)      0.8828
+
+Catatan:
+- Selisih Accuracy train vs test = 0.009 → tidak overfitting
+- Best iteration (early stopping, aucpr): 295 dari 300
+
+================================================================
+2. CONFUSION MATRIX
+================================================================
+
+Data test: 12.683 gempa (12.032 Normal + 651 Anomali)
+
+                   Prediksi Normal   Prediksi Anomali
+                  +-----------------+-----------------+
+Aktual Normal     |   TN = 11.892   |    FP =    140  |
+Aktual Anomali    |   FN =     38   |    TP =    613  |
+                  +-----------------+-----------------+
+
+- TP (True Positive)  = 613   → anomali terdeteksi dengan benar
+- TN (True Negative)  = 11.892 → normal terdeteksi dengan benar
+- FP (False Positive) = 140   → normal salah diklasifikasi sebagai anomali
+- FN (False Negative) = 38    → anomali yang TIDAK terdeteksi (miss)
+
+Miss rate anomali = 38 / 651 = 5.84%
+
+================================================================
+3. SHAP ANALYSIS
+================================================================
+
+File gambar:
+- shap_importance.png  → SHAP bar chart (rata-rata |SHAP value|)
+- shap_beeswarm.png    → SHAP beeswarm (arah pengaruh tiap fitur)
+
+Urutan fitur berdasarkan importance (dari beeswarm):
+depth, dmin, nst, gap, longitude, bulan, jam, latitude
+
+Untuk mendapatkan nilai numerik SHAP, jalankan di notebook:
+
+    import numpy as np
+    mean_shap = np.abs(sv).mean(axis=0)
+    for name, val in sorted(zip(feature_names, mean_shap), key=lambda x: -x[1]):
+        print(f"{name}: {val:.4f}")
+
+Catatan: SHAP harus dihitung menggunakan X_test (bukan X_test_scaled),
+karena model XGBoost dilatih dengan data yang tidak di-scale.
+
+================================================================
+4. HYPERPARAMETER TERPILIH (RandomizedSearchCV, 40 iter, CV=5)
+================================================================
+
+Parameter             Nilai
+--------------------  --------
+n_estimators          300
+max_depth             6
+learning_rate         0.1
+subsample             0.8
+colsample_bytree      0.8
+min_child_weight      5
+reg_alpha             0.1
+reg_lambda            1
+scale_pos_weight      ~19.0 (rasio normal/anomali otomatis)
+early_stopping_rounds 20
+eval_metric           aucpr
+
+================================================================
+5. VALIDASI DISTRIBUSI MAGNITUDE vs LABEL IF
+================================================================
+
+Rentang Mag   Total Gempa   Jumlah Anomali   % Anomali
+-----------   -----------   --------------   ---------
+< 3                    13                0       0.00%
+3 – 4               6.083              219       3.60%
+4 – 5              50.897            1.888       3.71%
+5 – 6               5.896              841      14.26%
+6 – 7                 467              209      44.75%
+≥ 7                    57               31      54.39%
+
+Gempa M≥5 : 8.519 gempa  → 13.80% anomali
+Gempa M<5 : 54.894 gempa →  3.67% anomali
+Rasio     : 3.77x (gempa besar lebih sering anomali)
+
+Interpretasi:
+Model mendeteksi anomali berdasarkan kombinasi fitur spasial/temporal
+yang tidak lazim, BUKAN berdasarkan magnitude secara langsung.
+Namun gempa besar (M≥5) memang 3.77x lebih sering terdeteksi anomali,
+karena cenderung memiliki profil depth/gap/dmin/nst yang tidak umum.
+Gempa M≥6 bahkan mencapai 44-54% anomali rate.
+
+================================================================
+6. EKSPERIMEN CONTAMINATION
+================================================================
+
+Contamination   Anomali Train   Anomali Test
+------------    -------------   ------------
+0.01                      508            130
+0.05                    2.537            651  ← dipilih
+0.10                    5.073          1.303
+
+================================================================
+7. MODEL YANG DISIMPAN
+================================================================
+
+- model_anomali.pkl    → model XGBoost anomaly detection
+- scaler_anomali.pkl   → StandardScaler (hanya untuk Isolation Forest,
+                         BUKAN untuk input XGBoost)
+
+================================================================

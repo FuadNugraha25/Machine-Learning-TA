@@ -16,7 +16,8 @@ User ingin implementasi **selengkap dan sedetail mungkin** — tidak ada batasan
 
 ## Identitas Project
 
-- **Judul:** Deteksi Anomali Gempa Bumi Indonesia Menggunakan Kombinasi Isolation Forest dan XGBoost dengan Pendekatan Imputasi Median
+- **Judul:** Sistem Mitigasi Gempa Berbasis Android dengan Fitur Deteksi Anomali Seismisitas Menggunakan Pipeline Isolation Forest dan XGBoost
+- **Judul lama (sebelum revisi dosen):** Deteksi Anomali Gempa Bumi Indonesia Menggunakan Kombinasi Isolation Forest dan XGBoost dengan Pendekatan Imputasi Median
 - **Topik:** Mitigasi Bencana
 - **Machine Learning:** XGBoost (dengan Isolation Forest sebagai label generator)
 - **Variable Feature:** Latitude, Longitude, Depth, Gap, Dmin, NST, Bulan, Jam
@@ -31,11 +32,11 @@ User ingin implementasi **selengkap dan sedetail mungkin** — tidak ada batasan
 
 ## Dataset
 
-- **File aktif:** `data/gempa_1990-2026.csv` — 63.414 baris, gabungan 7 file per periode
+- **File aktif:** `data/gempa_1990-2026.csv` — 63.413 baris (setelah filter type=earthquake), gabungan 7 file per periode
 - **File lama (tidak dipakai lagi):** `data/gempa_1990-2019.csv` — sudah dihapus
 - **Sumber:** USGS Earthquake Catalog
 - **Kolom fitur yang dipakai:** `latitude`, `longitude`, `depth`, `gap`, `dmin`, `nst`, `bulan`, `jam`
-- **Kolom bermasalah:** `gap` (15.615+ kosong), `dmin` (37.251+ kosong), `nst` (25.356+ kosong) — nilai kosong karena keterbatasan infrastruktur sensor era 1990-an, bukan data tidak valid
+- **Kolom bermasalah:** `gap` (15.615 kosong / 24.6%), `dmin` (37.251 kosong / 58.7%), `nst` (30.155 kosong / 47.6%) — nilai kosong karena keterbatasan infrastruktur sensor era 1990-an, bukan data tidak valid
 - **Kolom `mag` dilarang masuk sebagai fitur** — data leakage karena label klasifikasi dibuat dari `mag`
 - **Pendekatan penanganan nilai kosong: Imputasi Median** — terbukti lebih baik dari drop kolom berdasarkan hasil perbandingan
 
@@ -80,6 +81,10 @@ Mengacu paper Earthquake Early Warning (EEW):
 - Tidak ada ground truth — tidak bisa membuktikan label Isolation Forest benar/salah
 - Cascading error — jika Isolation Forest salah, XGBoost ikut salah
 - Subjektivitas berpindah ke parameter `contamination` Isolation Forest
+- Validasi hanya menggunakan distribusi magnitude sebagai proxy, bukan katalog BMKG resmi
+
+### Target Pengguna
+Bukan masyarakat umum — melainkan **analis BMKG dan peneliti seismologi** yang butuh alat untuk menandai gempa dengan profil tidak lazim untuk investigasi lebih lanjut.
 
 ### Fitur Aktif
 ```python
@@ -100,11 +105,16 @@ Model mendeteksi anomali berdasarkan **kombinasi fitur yang tidak biasa** diband
 
 ### Status
 - ✅ Model selesai — model_anomali.pkl, scaler_anomali.pkl tersimpan
-- ✅ Contamination 0.05 dipilih (3.171 anomali dari 63.414 data)
+- ✅ Contamination 0.05 dipilih (3.188 anomali dari 63.413 data)
 - ✅ anomali.html selesai (4 tab: Input Manual, Gempa Historis, Dashboard, Timeline)
 - ✅ dashboard.json dan timeline.json di-generate
-- ⏳ Keputusan: masukkan kolom mag sebagai fitur atau tidak?
-- ⏳ SHAP analysis
+- ✅ Kolom mag TIDAK dimasukkan sebagai fitur — keputusan final (data leakage)
+- ✅ SHAP analysis selesai — shap_importance.png, shap_beeswarm.png tersimpan
+- ✅ Validasi distribusi magnitude vs label IF selesai
+- ✅ Definisi operasional anomali sudah dirumuskan
+- ✅ Visualisasi cara kerja IF (simulasi 2D) tersimpan — visualisasi_IF.png
+- ⏳ Revisi judul di dokumen laporan
+- ⏳ Update Bab 2, 3, 4, 5 laporan sesuai panduan_laporan.md
 
 ---
 
@@ -163,13 +173,17 @@ TUGAS AKHIR/
 │   ├── gempa_1990-2026.csv      ← dataset utama
 │   └── points.json              ← untuk heatmap
 ├── Anomaly Detection/
-│   └── XGBoost.ipynb            ← anomaly detection (sedang dikerjakan)
+│   ├── XGBoost.ipynb            ← anomaly detection ✅ selesai
+│   ├── XGBoost_solo.ipynb       ← versi latihan mandiri user
+│   ├── shap_importance.png      ← SHAP bar chart ✅
+│   ├── shap_beeswarm.png        ← SHAP beeswarm ✅
+│   └── visualisasi_IF.png       ← simulasi cara kerja IF ✅
 ├── XGBoost.ipynb                ← klasifikasi tingkat bahaya
 ├── perbandingan.ipynb           ← perbandingan drop kolom vs imputasi
 ├── app.py                       ← Flask REST API (port 5000)
 ├── model_gempa.pkl              ← model klasifikasi
-├── model_anomali.pkl            ← model anomaly detection (belum ada)
-├── scaler_anomali.pkl           ← scaler anomaly detection (belum ada)
+├── model_anomali.pkl            ← model anomaly detection ✅
+├── scaler_anomali.pkl           ← scaler anomaly detection ✅
 ├── map.html
 ├── heatmap.html
 └── prediksi.html
