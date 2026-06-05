@@ -21,7 +21,7 @@ User ingin implementasi **selengkap dan sedetail mungkin** — tidak ada batasan
 - **Topik:** Mitigasi Bencana
 - **Machine Learning:** XGBoost (dengan Isolation Forest sebagai label generator)
 - **Variable Feature:** Latitude, Longitude, Depth, Gap, Dmin, NST, Bulan, Jam
-- **Variable Target:** Status Anomali Gempa (Normal / Anomali) — label dibuat otomatis oleh Isolation Forest dari 63.414 data historis USGS 1990–2026, contamination 5% mengacu proporsi kejadian ekstrem yang umum di penelitian deteksi anomali seismik
+- **Variable Target:** Status Anomali Gempa (Normal / Anomali) — label dibuat otomatis oleh Isolation Forest dari 63.413 data historis USGS 1990–2026, contamination 5% mengacu proporsi kejadian ekstrem yang umum di penelitian deteksi anomali seismik
 
 ## Pembagian Tugas Kelompok
 
@@ -101,7 +101,46 @@ Bukan masyarakat umum — melainkan **analis BMKG dan peneliti seismologi** yang
 - `scaler_anomali.pkl` — scaler untuk preprocessing input baru
 
 ### Dasar Deteksi Anomali
-Model mendeteksi anomali berdasarkan **kombinasi fitur yang tidak biasa** dibanding pola historis — bukan magnitude. Gempa besar belum tentu anomali. Anomali = gempa yang koordinat/depth/gap/dmin/nst-nya tidak umum secara historis.
+Model mendeteksi anomali berdasarkan **kombinasi fitur yang tidak biasa** dibanding pola historis — bukan magnitude secara langsung. Gempa besar belum tentu anomali, namun gempa M≥5 memang 3.77x lebih sering terdeteksi anomali karena cenderung memiliki profil depth/gap/dmin/nst yang tidak lazim. Anomali = gempa yang kombinasi koordinat/depth/gap/dmin/nst-nya tidak umum secara historis.
+
+### Hasil Evaluasi XGBoost (terverifikasi)
+| Metrik | Nilai |
+|---|---|
+| Accuracy (train) | 0.9950 |
+| Accuracy (test) | 0.9860 |
+| Precision | 0.8141 |
+| Recall (Anomali) | 0.9416 |
+| F1 Score | 0.8732 |
+| AUC-ROC | 0.9981 |
+| Best F1 CV (5-fold) | 0.8828 |
+
+**Confusion Matrix (test set):** TN=11.892, FP=140, FN=38, TP=613
+
+### Validasi Distribusi Magnitude (terverifikasi)
+| Rentang Mag | Total | Anomali | % |
+|---|---|---|---|
+| < 3 | 13 | 0 | 0.00% |
+| 3–4 | 6.083 | 219 | 3.60% |
+| 4–5 | 50.897 | 1.888 | 3.71% |
+| 5–6 | 5.896 | 841 | 14.26% |
+| 6–7 | 467 | 209 | 44.75% |
+| ≥7 | 57 | 31 | 54.39% |
+
+- Gempa M≥5: 8.519 gempa → 13.80% anomali
+- Gempa M<5: 54.894 gempa → 3.67% anomali
+- Rasio: **3.77x**
+
+### Hyperparameter Terpilih (RandomizedSearchCV, 40 iter, CV=5)
+```python
+{'n_estimators': 300, 'max_depth': 6, 'learning_rate': 0.1,
+ 'subsample': 0.8, 'colsample_bytree': 0.8, 'min_child_weight': 5,
+ 'reg_alpha': 0.1, 'reg_lambda': 1, 'scale_pos_weight': ~19.0}
+```
+
+### Catatan Teknis Penting
+- `scaler_anomali.pkl` hanya digunakan untuk Isolation Forest, **BUKAN** untuk input XGBoost
+- SHAP harus dihitung dengan `X_test` (tidak di-scale), bukan `X_test_scaled`
+- Cell validasi magnitude di notebook memiliki bug indexing (gunakan angka terverifikasi di atas)
 
 ### Status
 - ✅ Model selesai — model_anomali.pkl, scaler_anomali.pkl tersimpan
