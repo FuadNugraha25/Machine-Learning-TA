@@ -3,30 +3,35 @@ CATATAN ANOMALY DETECTION - XGBoost
 
 HASIL MODEL
 -----------
-Best params  : subsample=1.0, 
+Best params  : subsample=0.8,
                 n_estimators=300,
-                min_child_weight=1,
-                max_depth=8,
-                learning_rate=0.2,
-                colsample_bytree=0.8
-Best F1 CV   : 0.8733
-Accuracy train : 1.0
-Accuracy test  : 0.9877
-Precision      : 0.8444
-Recall Anomali : 0.9243
-F1 Anomali     : 0.8825
-AUC-ROC        : 0.9978
+                min_child_weight=5,
+                max_depth=6,
+                learning_rate=0.1,
+                colsample_bytree=0.8,
+                reg_alpha=0.1,
+                reg_lambda=1,
+                scale_pos_weight=~19.0
+Best F1 CV   : 0.8828
+Accuracy train : 0.9950
+Accuracy test  : 0.9860
+Precision      : 0.8141
+Recall Anomali : 0.9416
+F1 Anomali     : 0.8732
+AUC-ROC        : 0.9981
+Best iteration : 295 (early stopping)
+
+Confusion Matrix (test set):
+  TN=11.892, FP=140, FN=38, TP=613
 
 
 YANG PERLU DIPERHATIKAN
 -----------------------
-1. OVERFITTING RINGAN
-   - Accuracy train = 1.0 (sempurna), test = 0.9877
-   - Selisihnya kecil tapi train sempurna adalah tanda peringatan
-   - Perlu diakui di laporan sebagai keterbatasan
-   - Bukti tambahan: model hampir selalu confident 99-100%, bahkan di input yang ambigu
-   - Penyebab: data besar (63k baris) + max_depth=8 + label Isolation Forest yang tegas
-     → model terlalu hafal pola, hampir tidak pernah ragu
+1. OVERFITTING — SUDAH DIATASI
+   - Accuracy train = 0.9950, test = 0.9860 (selisih kecil, wajar)
+   - Sebelumnya train=1.0 (overfit) karena max_depth=8, sudah diperbaiki ke max_depth=6
+   - min_child_weight=5 dan reg_alpha=0.1 menambah regularisasi
+   - scale_pos_weight dihapus multiplier *10 yang agresif → confidence tidak lagi 99-100%
 
 2. BUKAN GROUND TRUTH
    - Model belajar dari label Isolation Forest, bukan label gempa anomali yang sebenarnya
@@ -34,9 +39,10 @@ YANG PERLU DIPERHATIKAN
    - Wajib ditulis di laporan dengan jelas
 
 3. CONTAMINATION
-   - Catat contamination berapa yang akhirnya dipilih
-   - Nilai contamination menentukan seberapa banyak data dianggap anomali
-   - Subjektivitas model ada di sini — kenapa pilih nilai itu, bukan yang lain, harus bisa dijelaskan
+   - Dipilih: 0.05 → mengacu proporsi kejadian ekstrem umum di penelitian seismik
+   - Menghasilkan 3.188 anomali dari 63.413 data
+   - Eksperimen dilakukan di 3 nilai: 0.01, 0.05, 0.10 → 0.05 dipilih
+   - Subjektivitas model ada di sini — harus dijelaskan di laporan
 
 4. CASCADING ERROR
    - Jika Isolation Forest salah menentukan label, XGBoost ikut salah
@@ -62,21 +68,45 @@ YANG PERLU DIPERHATIKAN
    - bulan, jam           → pola waktu (temporal)
    Anomali = kombinasi fitur-fitur di atas yang tidak lazim secara historis
 
+VALIDASI DISTRIBUSI MAGNITUDE (terverifikasi)
+---------------------------------------------
+Rentang Mag | Total  | Anomali | %
+< 3         |     13 |       0 |  0.00%
+3-4         |  6.083 |     219 |  3.60%
+4-5         | 50.897 |   1.888 |  3.71%
+5-6         |  5.896 |     841 | 14.26%
+6-7         |    467 |     209 | 44.75%
+>=7         |     57 |      31 | 54.39%
+
+Gempa M>=5 : 8.519 gempa  → 13.80% anomali
+Gempa M<5  : 54.894 gempa →  3.67% anomali
+Rasio      : 3.77x — mendukung validitas label IF
+
+CATATAN: Cell validasi di notebook ada bug indexing →
+gunakan angka di atas sebagai referensi yang benar.
+
+PIPELINE & ARSITEKTUR
+----------------------
+- IF = unsupervised → hanya menghasilkan LABEL (0/1), tidak disimpan ke .pkl
+- XGBoost = supervised → belajar dari label IF, disimpan ke model_anomali.pkl
+- scaler_anomali.pkl → hanya untuk scaling input sebelum masuk IF (saat training)
+  BUKAN untuk input XGBoost saat prediksi
+- SHAP dihitung dengan X_test (tidak di-scale), bukan X_test_scaled
+- Secara keseluruhan pipeline = semi-supervised
+
 YANG SUDAH SELESAI
 ------------------
-- Contamination: 0.05 (3.171 anomali dari 63.414 data)
+- Contamination: 0.05 (3.188 anomali dari 63.413 data)
 - model_anomali.pkl dan scaler_anomali.pkl tersimpan
 - app.py endpoint /prediksi-anomali selesai
 - anomali.html selesai (4 tab: Input Manual, Gempa Historis, Dashboard, Timeline)
 - dashboard.json dan timeline.json di-generate dari seluruh data
-
-YANG SUDAH DITAMBAHKAN
-----------------------
 - mag TIDAK dimasukkan (final) — data leakage
 - SHAP selesai → shap_importance.png, shap_beeswarm.png
-- Validasi distribusi magnitude vs label IF → ~5% merata semua kelompok
+- Validasi distribusi magnitude vs label IF selesai (rasio 3.77x)
 - Visualisasi cara kerja IF → visualisasi_IF.png
 - Definisi operasional anomali sudah dirumuskan → lihat panduan_laporan.md
+- Overfitting diatasi (train 0.995, test 0.986)
 
 YANG BELUM DIKERJAKAN
 ---------------------

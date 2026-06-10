@@ -78,10 +78,10 @@ Mengacu paper Earthquake Early Warning (EEW):
 - Kombinasi dua model = kontribusi ilmiah lebih kaya
 
 ### Kelemahan yang Harus Diakui di Laporan
-- Tidak ada ground truth — tidak bisa membuktikan label Isolation Forest benar/salah
-- Cascading error — jika Isolation Forest salah, XGBoost ikut salah
-- Subjektivitas berpindah ke parameter `contamination` Isolation Forest
-- Validasi hanya menggunakan distribusi magnitude sebagai proxy, bukan katalog BMKG resmi
+- ~~Tidak ada ground truth~~ — **dosen menyatakan ini tidak masalah** untuk pendekatan unsupervised anomaly detection. Isolation Forest memang dirancang untuk kasus tanpa ground truth.
+- Cascading error — jika Isolation Forest salah memberi label, XGBoost ikut salah
+- Subjektivitas berpindah ke parameter `contamination` Isolation Forest (dipilih 0.05 mengacu proporsi kejadian ekstrem umum di penelitian seismik)
+- Validasi menggunakan distribusi magnitude sebagai proxy (rasio 3.77x mendukung validitas label)
 
 ### Target Pengguna
 Bukan masyarakat umum — melainkan **analis BMKG dan peneliti seismologi** yang butuh alat untuk menandai gempa dengan profil tidak lazim untuk investigasi lebih lanjut.
@@ -194,6 +194,7 @@ Perbandingan Drop Kolom vs Imputasi Median menggunakan XGBoost klasifikasi:
 
 ## Aturan Penting
 
+- **Gaya Komunikasi Kritis & Edukatif:** Selalu jawab pertanyaan konseptual secara komprehensif, logis, dan didukung analogi yang mudah dipahami. Jangan sekadar membenarkan argumen user atau mengikuti perintah secara buta. Jika ada miskonsepsi (misal dari dosen/teori), berikan bantahan/argumen akademis yang solid dan terstruktur.
 - **Jangan confirmation bias** — jangan membenarkan pilihan model tanpa bukti perbandingan objektif
 - **Urutan perubahan:** notebook → app.py → HTML (jika perlu). Jangan mulai dari HTML
 - **Fitur waktu** (`bulan`, `jam`) wajib dibuat dari `df` asli sebelum `dropna()` untuk menghindari index mismatch
