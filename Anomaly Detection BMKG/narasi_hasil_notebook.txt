@@ -34,6 +34,4 @@ Anomali (1):
 - Borneo: 42 kejadian
 - Banda Sea: 36 kejadian
 
-6. CATATAN SELANJUTNYA (XGBOOST)
-- Dataset lengkap dengan label anomali sudah disimpan di 'dataset_dengan_anomali.csv'.
-- Fitur target untuk XGBoost adalah 'anomaly_label'.
+
