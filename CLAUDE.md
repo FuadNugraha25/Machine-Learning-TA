@@ -32,8 +32,9 @@ User ingin implementasi **selengkap dan sedetail mungkin** — tidak ada batasan
 
 ## Dataset
 
-- **File aktif:** `data/gempa_1990-2026.csv` — 63.413 baris (setelah filter type=earthquake), gabungan 7 file per periode
-- **File lama (tidak dipakai lagi):** `data/gempa_1990-2019.csv` — sudah dihapus
+- **File aktif:** `data/bmkg/gabungan_2008_2026.csv` — 131.130 baris (Gabungan data BMKG 2008–2026)
+- **File lama (tidak dipakai lagi):** `data/gempa_1990-2026.csv`
+- **Sumber:** BMKG Earthquake Catalog
 - **Sumber:** USGS Earthquake Catalog
 - **Kolom fitur yang dipakai:** `latitude`, `longitude`, `depth`, `gap`, `dmin`, `nst`, `bulan`, `jam`
 - **Kolom bermasalah:** `gap` (15.615 kosong / 24.6%), `dmin` (37.251 kosong / 58.7%), `nst` (30.155 kosong / 47.6%) — nilai kosong karena keterbatasan infrastruktur sensor era 1990-an, bukan data tidak valid
@@ -65,9 +66,15 @@ Mengacu paper Earthquake Early Warning (EEW):
 
 ---
 
-## Fitur ML 2: Anomaly Detection (anomaly detection/XGBoost.ipynb)
+## Fitur ML 2: Anomaly Detection (Fokus Baru: Anomaly Detection BMKG/IF_XGB.ipynb)
 
-### Pendekatan
+### Pendekatan Baru (Fokus Saat Ini)
+- Eksperimen baru difokuskan di dalam folder `Anomaly Detection BMKG`.
+- Notebook utama: `IF_XGB.ipynb` (meski namanya mengandung XGB, namun proyek baru ini **tidak akan menggunakan XGBoost**).
+- **Fokus Tunggal:** Hanya menggunakan **Isolation Forest murni** (unsupervised) untuk pelabelan dan deteksi anomali akhir. Tahapan XGBoost **DIBATALKAN/TIDAK DIPAKAI** untuk eksperimen BMKG ini.
+- Pendekatan terhadap definisi dan deteksi anomali disesuaikan murni menggunakan perhitungan statistik, *anomaly score*, dan label langsung dari Isolation Forest berdasarkan data BMKG.
+
+### Pendekatan Lama (Anomaly Detection/XGBoost.ipynb)
 **Isolation Forest → XGBoost** (2 tahap):
 1. Isolation Forest (unsupervised) → generate label anomali/normal dari data
 2. XGBoost (supervised) → belajar dari label tersebut dan jelaskan pola via SHAP
@@ -194,14 +201,16 @@ Perbandingan Drop Kolom vs Imputasi Median menggunakan XGBoost klasifikasi:
 
 ## Aturan Penting
 
-- **Gaya Komunikasi Kritis & Edukatif:** Selalu jawab pertanyaan konseptual secara komprehensif, logis, dan didukung analogi yang mudah dipahami. Jangan sekadar membenarkan argumen user atau mengikuti perintah secara buta. Jika ada miskonsepsi (misal dari dosen/teori), berikan bantahan/argumen akademis yang solid dan terstruktur.
-- **Jangan confirmation bias** — jangan membenarkan pilihan model tanpa bukti perbandingan objektif
-- **Urutan perubahan:** notebook → app.py → HTML (jika perlu). Jangan mulai dari HTML
-- **Fitur waktu** (`bulan`, `jam`) wajib dibuat dari `df` asli sebelum `dropna()` untuk menghindari index mismatch
-- **Kolom `mag` dilarang sebagai fitur** — data leakage
-- **Setiap ganti skema label** di notebook wajib diikuti update `app.py`
-- **JANGAN langsung edit notebook (.ipynb)** — user adalah mahasiswa TA yang harus bisa presentasikan perubahannya sendiri. Cukup jelaskan apa yang perlu diubah dan tunjukkan kode yang harus ditulis, biarkan user yang mengetik dan menjalankan sendiri
-- **app.py boleh diedit langsung** — user mengizinkan perubahan langsung pada app.py
+> **PERHATIAN: Aturan-aturan teknis di bawah ini sebagian besar hanya berlaku untuk eksperimen lama (USGS / `Anomaly Detection/XGBoost.ipynb`).** Untuk project baru dengan data BMKG (`Anomaly Detection BMKG/IF_XGB.ipynb`), proses dieksplorasi kembali dari nol (0) sehingga aturan teknis (pemilihan fitur, penanganan data, dll) akan ditentukan seiring berjalannya proyek baru.
+
+- **Gaya Komunikasi Kritis & Edukatif (Berlaku Global):** Selalu jawab pertanyaan konseptual secara komprehensif, logis, dan didukung analogi yang mudah dipahami. Jangan sekadar membenarkan argumen user atau mengikuti perintah secara buta. Jika ada miskonsepsi (misal dari dosen/teori), berikan bantahan/argumen akademis yang solid dan terstruktur.
+- **Jangan confirmation bias (Berlaku Global):** jangan membenarkan pilihan model tanpa bukti perbandingan objektif
+- **Aturan mengedit notebook (.ipynb) (Berlaku Global):** Secara *default*, JANGAN langsung edit file notebook. Cukup jelaskan apa yang perlu diubah dan berikan kode agar user yang memasukkannya sendiri. **PENGECUALIAN:** Anda HANYA diizinkan mengedit file notebook secara langsung jika user yang meminta secara eksplisit.
+- **Urutan perubahan (Project Lama):** notebook → app.py → HTML (jika perlu). Jangan mulai dari HTML
+- **Fitur waktu (Project Lama):** (`bulan`, `jam`) wajib dibuat dari `df` asli sebelum `dropna()` untuk menghindari index mismatch
+- **Kolom `mag` dilarang sebagai fitur (Project Lama):** — data leakage
+- **Setiap ganti skema label (Project Lama):** di notebook wajib diikuti update `app.py`
+- **app.py boleh diedit langsung:** — user mengizinkan perubahan langsung pada app.py
 
 ---
 
@@ -210,14 +219,18 @@ Perbandingan Drop Kolom vs Imputasi Median menggunakan XGBoost klasifikasi:
 ```
 TUGAS AKHIR/
 ├── data/
-│   ├── gempa_1990-2026.csv      ← dataset utama
-│   └── points.json              ← untuk heatmap
-├── Anomaly Detection/
-│   ├── XGBoost.ipynb            ← anomaly detection ✅ selesai
-│   ├── XGBoost_solo.ipynb       ← versi latihan mandiri user
-│   ├── shap_importance.png      ← SHAP bar chart ✅
-│   ├── shap_beeswarm.png        ← SHAP beeswarm ✅
-│   └── visualisasi_IF.png       ← simulasi cara kerja IF ✅
+│   ├── bmkg/
+│   │   └── gabungan_2008_2026.csv   ← dataset utama BMKG yang baru
+│   ├── gempa_1990-2026.csv          ← dataset lama
+│   └── points.json                  ← untuk heatmap
+├── Anomaly Detection BMKG/          ← FOKUS SAAT INI
+│   └── IF_XGB.ipynb                 ← eksperimen anomaly detection baru
+├── Anomaly Detection/               ← folder lama
+│   ├── XGBoost.ipynb                ← anomaly detection ✅ selesai
+│   ├── XGBoost_solo.ipynb           ← versi latihan mandiri user
+│   ├── shap_importance.png          ← SHAP bar chart ✅
+│   ├── shap_beeswarm.png            ← SHAP beeswarm ✅
+│   └── visualisasi_IF.png           ← simulasi cara kerja IF ✅
 ├── XGBoost.ipynb                ← klasifikasi tingkat bahaya
 ├── perbandingan.ipynb           ← perbandingan drop kolom vs imputasi
 ├── app.py                       ← Flask REST API (port 5000)
