@@ -66,11 +66,11 @@ Mengacu paper Earthquake Early Warning (EEW):
 
 ---
 
-## Fitur ML 2: Anomaly Detection (Fokus Baru: Anomaly Detection BMKG/IF_XGB.ipynb)
+## Fitur ML 2: Anomaly Detection (Fokus Baru: Anomaly Detection BMKG/isolation_forest.ipynb)
 
 ### Pendekatan Baru (Fokus Saat Ini)
 - Eksperimen baru difokuskan di dalam folder `Anomaly Detection BMKG`.
-- Notebook utama: `IF_XGB.ipynb` (meski namanya mengandung XGB, namun proyek baru ini **tidak akan menggunakan XGBoost**).
+- Notebook utama: `isolation_forest.ipynb` (meski namanya sebelumnya mengandung XGB, namun proyek baru ini **tidak akan menggunakan XGBoost**).
 - **Fokus Tunggal:** Hanya menggunakan **Isolation Forest murni** (unsupervised) untuk pelabelan dan deteksi anomali akhir. Tahapan XGBoost **DIBATALKAN/TIDAK DIPAKAI** untuk eksperimen BMKG ini.
 - Pendekatan terhadap definisi dan deteksi anomali disesuaikan murni menggunakan perhitungan statistik, *anomaly score*, dan label langsung dari Isolation Forest berdasarkan data BMKG.
 
@@ -201,7 +201,7 @@ Perbandingan Drop Kolom vs Imputasi Median menggunakan XGBoost klasifikasi:
 
 ## Aturan Penting
 
-> **PERHATIAN: Aturan-aturan teknis di bawah ini sebagian besar hanya berlaku untuk eksperimen lama (USGS / `Anomaly Detection/XGBoost.ipynb`).** Untuk project baru dengan data BMKG (`Anomaly Detection BMKG/IF_XGB.ipynb`), proses dieksplorasi kembali dari nol (0) sehingga aturan teknis (pemilihan fitur, penanganan data, dll) akan ditentukan seiring berjalannya proyek baru.
+> **PERHATIAN: Aturan-aturan teknis di bawah ini sebagian besar hanya berlaku untuk eksperimen lama (USGS / `Anomaly Detection/XGBoost.ipynb`).** Untuk project baru dengan data BMKG (`Anomaly Detection BMKG/isolation_forest.ipynb`), proses dieksplorasi kembali dari nol (0) sehingga aturan teknis (pemilihan fitur, penanganan data, dll) akan ditentukan seiring berjalannya proyek baru.
 
 - **Gaya Komunikasi Kritis & Edukatif (Berlaku Global):** Selalu jawab pertanyaan konseptual secara komprehensif, logis, dan didukung analogi yang mudah dipahami. Jangan sekadar membenarkan argumen user atau mengikuti perintah secara buta. Jika ada miskonsepsi (misal dari dosen/teori), berikan bantahan/argumen akademis yang solid dan terstruktur.
 - **Jangan confirmation bias (Berlaku Global):** jangan membenarkan pilihan model tanpa bukti perbandingan objektif
@@ -224,7 +224,7 @@ TUGAS AKHIR/
 │   ├── gempa_1990-2026.csv          ← dataset lama
 │   └── points.json                  ← untuk heatmap
 ├── Anomaly Detection BMKG/          ← FOKUS SAAT INI
-│   └── IF_XGB.ipynb                 ← eksperimen anomaly detection baru
+│   └── isolation_forest.ipynb                 ← eksperimen anomaly detection baru
 ├── Anomaly Detection/               ← folder lama
 │   ├── XGBoost.ipynb                ← anomaly detection ✅ selesai
 │   ├── XGBoost_solo.ipynb           ← versi latihan mandiri user
