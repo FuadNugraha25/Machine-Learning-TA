@@ -54,6 +54,7 @@ Tugas Akhir Sistem Informasi — pengembangan deteksi anomali seismisitas menggu
 - **Aturan mengedit notebook (.ipynb):** Secara *default*, JANGAN langsung edit file notebook. Cukup jelaskan apa yang perlu diubah dan berikan kode agar user yang memasukkannya sendiri. **PENGECUALIAN:** Anda HANYA diizinkan mengedit file notebook secara langsung jika user yang meminta secara eksplisit.
 - **Kesesuaian Kode:** Semua pengerjaan ML mengenai gempa harus **berpedoman mutlak** pada file `Anomaly Detection BMKG/isolation_forest.ipynb`. Segala aturan atau pendekatan lama (seperti XGBoost, analisis SHAP, larangan pemakaian fitur `mag`, imputasi median, dll) sudah usang dan dibatalkan.
 - **Kesesuaian Template Laporan:** Selalu patuhi standar penulisan (template) laporan atau proposal Tugas Akhir. Gambar/Visualisasi harus diletakkan relevan di tengah teks, dan panjang pembahasan bab (seperti Latar Belakang) harus proporsional untuk standar akademis (tidak boleh terlalu singkat).
+- **Aturan Membaca Laporan:** Jika user meminta Anda melihat/membaca bagian tertentu (contoh: sub-bab 2.2), Anda WAJIB membaca bagian tersebut beserta bagian-bagian SEBELUMNYA (seperti 2.1 atau bahkan Bab 1 sepenuhnya) untuk memastikan pemahaman konteks secara utuh. Anda DILARANG KERAS melihat atau merujuk ke bagian setelahnya (seperti 2.3, Bab 3, dan seterusnya) kecuali diminta secara eksplisit.
 
 ---
 
@@ -83,3 +84,4 @@ Lokasi file laporan utama yang dapat diedit secara otomatis:
 2. SELALU gunakan **COM Automation secara live** (misal: dengan skrip Python via library `win32com.client`). 
 3. Anda harus menulis skrip Python dengan `win32com.client.Dispatch("Word.Application")` dan mencari dokumen yang sedang terbuka di `word.Documents`.
 4. Dengan cara ini, user dapat melihat perubahannya secara langsung secara "live" tanpa perlu menutup aplikasinya.
+5. Setelah skrip Python yang dibuat (misalnya di folder `scratch/`) selesai dieksekusi untuk membaca atau mengedit Word, skrip tersebut WAJIB langsung dihapus agar file tidak menumpuk.

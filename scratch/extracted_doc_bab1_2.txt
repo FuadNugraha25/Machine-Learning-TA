@@ -1,0 +1,1049 @@
+TUGAS AKHIR
+SISTEM MITIGASI GEMPA BERBASIS ANDROID DENGAN DETEKSI ANOMALI MENGGUNAKAN ISOLATION FOREST PADA APLIKASI AMANIN
+Oleh:
+FUAD NUGRAHA FIRJATULLAH
+1202223076
+/
+PROGRAM STUDI STRATA 1 SISTEM INFORMASI
+FAKULTAS REKAYASA INDUSTRI
+UNIVERSITAS TELKOM
+2025
+DAFTAR ISI
+DAFTAR ISI	ii
+DAFTAR GAMBAR	v
+DAFTAR TABEL	vi
+DAFTAR ISTILAH	vii
+DAFTAR SINGKATAN	viii
+DAFTAR SIMBOL	ix
+DAFTAR LAMPIRAN	x
+Bab I	PENDAHULUAN	1
+I.1	Latar Belakang	1
+I.2	Rumusan Masalah	4
+I.3	Tujuan Penelitian	5
+I.4	Batasan Penelitian	5
+I.5	Manfaat Penelitian	6
+I.6	Sistematika Penulisan	7
+Bab II	TINJAUAN PUSTAKA	9
+II.1	Gempa Bumi	9
+II.1.1	Pengertian Gempa Bumi	9
+II.1.2	Parameter Dasar Gempa Bumi	11
+II.2	Sistem Informasi dan Aplikasi Android dalam Mitigasi Gempa	16
+II.2.1	Sistem Informasi Kebencanaan	17
+II.2.2	Aplikasi Berbasis Android sebagai Media Mitigasi	18
+II.2.3	Integrasi Sistem Prediksi dalam Aplikasi Mobile	19
+II.2.4	Penyajian Informasi Mitigasi Gempa pada Aplikasi Android	21
+II.3	Prediksi Probabilitas Dampak Gempa	22
+II.3.1	Konsep Prediksi dalam Sistem Mitigasi	23
+II.3.2	Prediksi Probabilitas sebagai Pendekatan Risiko	24
+II.3.3	Variabel Penentu Dampak Guncangan Gempa	26
+II.4	Machine Learning dalam Prediksi Dampak Gempa	28
+II.4.1	Machine Learning	29
+II.4.2	Supervised Learning	31
+II.4.3	Model Klasifikasi Berbasis Probabilistik	32
+II.5	Logistic Regression	34
+II.5.1	Konsep Dasar Logistic Regression	35
+II.5.2	Fungsi Sigmoid dan Interpretasi Probabilitas	36
+II.5.3	Logistic Regression dalam Prediksi Risiko Bencana	37
+II.5.4	Kelebihan dan Kekurangan	38
+II.6	Evaluasi Model Prediksi	40
+II.6.1	Confusion Matrix	40
+II.6.2	Accuracy, Precision, Recall, dan AUC	41
+II.6.3	Interpretasi Hasil Prediksi untuk Mitigasi	43
+II.7	State of Art	45
+Bab III	METODE PENYELESAIAN MASALAH	50
+III.1	Model Konseptual	50
+III.2	Sistematika Penyelesaian Masalah	51
+III.2.1	Tahap Pengumpulan Data	52
+III.2.2	Tahap Pengolahan Data	52
+III.2.3	Tahap Evaluasi	53
+III.3	Pengumpulan Data	53
+III.3.1	Data Primer	54
+III.3.2	Data Sekunder	54
+III.4	Alasan Pemilihan Metode	54
+DAFTAR PUSTAKA	57
+LAMPIRAN	60
+DAFTAR GAMBAR
+Gambar  I1 Peta risiko bencana gempa bumi di sekitar Sesar Lembang	2
+Gambar  II1 Mekanisme terjadinya gempa	10
+Gambar  II2 Alur Proses Model Machine Learning	30
+Gambar  II3 Kurva sigmoid pada metode Logistic Regression.	34
+Gambar  III1 Model Konseptual	50
+DAFTAR TABEL
+Tabel I.1 Sistematika Penulisan	7
+Tabel II.1 Keterkaitan parameter yang mempengaruhi dampak guncangan	13
+Tabel II.2 Tabel perbandingan mitigasi struktural dan non-struktural	16
+Tabel II.3 Perbandingan fitur aplikasi existing	21
+Tabel II.4 Variabel penentu dampak guncangan gempa	28
+Tabel II.5 Kelebihan dan Kekurangan Logistic Regression	39
+Tabel II.6 Confusion Matrix	41
+Tabel II.7 State of Art	45
+DAFTAR ISTILAH
+Istilah
+Deskripsi
+Halaman Pertama Kali Digunakan
+
+TP
+True Positive – Dimana algoritma memprediksi positif dan prediksinya benar
+44
+
+TN
+True Negative – Dimana algoritma memprediksi negatif dan prediksinya benar
+44
+
+FP
+False Positive – Dimana algoritma memprediksi positif dan prediksinya salah
+44
+
+FN
+False Negative – Dimana algoritma memprediksi negatif dan prediksinya salah
+44
+
+132DAFTAR SINGKATAN
+Singkatan
+Deskripsi
+Halaman Pertama Kali Digunakan
+
+MMI
+Modified Mercalli Intensity
+13
+
+Mw
+Moment Magnitude
+13
+
+BMKG
+Badan Meteorologi. Klimatologi, dan Geofiska
+22
+
+AUC
+Area Under the Curve
+44
+
+DAFTAR SIMBOL
+Simbol
+Deskripsi
+Halaman Pertama Kali Digunakan
+
+𝑃
+Probability
+38
+
+𝑦
+Variabel target / output
+38
+
+x
+Variabel input / prediktor
+38
+
+𝑧
+Kombinasi linear / skor model
+38
+
+𝑒
+Bilangan Euler
+38
+
+𝛽
+Beta / koefisien model
+38
+
+DAFTAR LAMPIRAN
+Lampiran 1 Wawancara ke satu	60
+Lampiran 2 Wawancara ke dua	60
+Lampiran 3 Wawancara ke tiga	61
+Lampiran 4 Hasil Wawancara	61
+PENDAHULUAN
+Bab Pendahuluan ini menyajikan kerangka dasar penelitian, mulai dari latar belakang masalah, perumusan masalah dan tujuan, batasan, manfaat studi, hingga diakhiri dengan sistematika penulisan sebagai panduan untuk keseluruhan laporan.
+Latar Belakang
+Indonesia merupakan negara kepulauan yang terletak di kawasan strategis namun rentan terhadap bencana, yakni di sepanjang Cincin Api Pasifik (Pacific Ring of Fire) dan zona pertemuan tiga lempeng tektonik utama dunia, yaitu lempeng Indo-Australia, Eurasia, dan Pasifik. Posisi geologis yang sangat kompleks ini menjadikan wilayah Indonesia sebagai salah satu daerah dengan tingkat aktivitas seismik tertinggi di dunia. Aktivitas pergerakan dan subduksi lempeng-lempeng tektonik ini memicu terbentuknya jalur sesar aktif dan palung laut dalam yang tersebar di hampir seluruh penjuru nusantara, mulai dari barat Sumatera, selatan Jawa, hingga kawasan timur Indonesia (Nugraha dkk., 2018). Intensitas dan frekuensi gempa bumi yang sangat tinggi setiap tahunnya membawa konsekuensi logis berupa ancaman bencana alam yang konstan. Gempa bumi tidak hanya berisiko menimbulkan korban jiwa, tetapi juga dapat menyebabkan kerusakan infrastruktur yang masif dan melumpuhkan sektor ekonomi di wilayah terdampak. Oleh karena itu, pengawasan aktivitas seismik dan upaya mitigasi berbasis analisis data yang presisi menjadi sebuah urgensi mutlak bagi pemerintah dan para pemangku kepentingan.
+Seiring dengan perkembangan teknologi dan jaringan sensor gempa, BMKG telah berhasil mengumpulkan data historis kejadian gempa bumi dalam jumlah besar yang dapat dimanfaatkan untuk berbagai analisis dan penelitian. Data katalog gempa bumi ini sangat kaya akan informasi penting, mencakup parameter spasial seperti garis lintang (latitude) dan garis bujur (longitude), serta parameter sumber gempa seperti kedalaman (depth) dan magnitudo (mag). Ketersediaan data berskala besar ini membuka peluang besar untuk melakukan pemetaan risiko dan analisis spasial tingkat lanjut.
+Gambar I-1 Peta sebaran gempa bumi Indonesia (Contoh visualisasi)
+Sumber: (Katalog Gempa BMKG, 2026
+Namun, tingginya volume data historis tersebut juga menghadirkan tantangan tersendiri bagi analis geofisika. Di dalam ribuan rekaman gempa biasa, sering kali tersembunyi kejadian-kejadian gempa bumi dengan karakteristik yang tidak lazim atau anomali. Anomali seismik ini bisa berupa kejadian gempa dengan kedalaman yang sangat dangkal atau sangat dalam di zona yang secara historis stabil, atau pelepasan energi magnitudo yang tidak wajar di sepanjang sesar minor. Pendeteksian kejadian anomali ini sangat krusial dalam ilmu seismologi karena dapat menjadi indikator awal adanya potensi rekahan baru, perubahan struktur lempeng bawah permukaan, atau pola akumulasi stres (tegangan) lempeng yang belum teridentifikasi sebelumnya (Pratama dkk., 2020). Mengidentifikasi anomali secara manual pada data yang memiliki banyak variabel tidaklah efisien dan berpotensi menimbulkan perbedaan interpretasi.
+Pendekatan analitik konvensional seringkali mengalami hambatan dalam memetakan anomali secara akurat, terutama pada kumpulan data berdimensi tinggi yang tidak dilengkapi dengan label (ground truth). Keberadaan ground truth pada data bencana alam sangatlah langka, karena menetapkan suatu gempa sebagai "normal" atau "anomali" secara objektif tanpa analisis komputasional membutuhkan waktu yang sangat lama. Oleh karena itu, penerapan metodologi komputasi modern yang berfokus pada pengenalan pola mandiri (unsupervised learning) merupakan jalan keluar yang paling rasional.
+Dalam bidang Machine Learning, algoritma Isolation Forest telah muncul sebagai salah satu pendekatan unsupervised learning yang paling andal dan efisien untuk pendeteksian anomali. Berbeda dengan mayoritas metode konvensional yang bekerja dengan memodelkan profil data normal dan menghitung jarak jarak antar titik yang memakan biaya komputasi besar (distance-based computation), Isolation Forest bekerja secara terbalik. Algoritma ini langsung mengisolasi titik data anomali dengan memanfaatkan fakta bahwa anomali umumnya memiliki jumlah observasi yang sangat sedikit atau minoritas dan memiliki distribusi nilai atribut yang berbeda signifikan dibandingkan populasi data utama (Hariri dkk., 2019). Isolation Forest menggunakan metode partisi acak berbasis pohon (tree-based) untuk mengidentifikasi data yang berbeda dari pola umum. Pendekatan ini memungkinkan model mendeteksi anomali secara efektif meskipun data mengandung banyak variasi atau yang biasa disebut dengan noise (Setiawan & Wibowo, 2023).
+Meskipun Isolation Forest mampu mendeteksi anomali seismik dari data dalam jumlah besar, hasil yang dihasilkan masih berupa informasi teknis yang tidak selalu mudah dipahami oleh pengguna. Agar wawasan deteksi anomali ini dapat dimanfaatkan secara praktis dan menjadi instrumen mitigasi bencana yang proaktif, hasil analisis model Machine Learning tersebut harus diintegrasikan ke dalam sebuah platform yang mudah diakses dan dipahami oleh berbagai lapisan masyarakat.
+Hingga saat ini, telah tersedia berbagai aplikasi mobile yang menyediakan informasi gempa bumi dan kebencanaan kepada masyarakat. Informasi yang ditampilkan umumnya mencakup informasi kejadian gempa yang disediakan oleh lembaga terkait. Meskipun informasi tersebut bermanfaat sebagai sumber informasi awal, pengguna masih belum memperoleh gambaran mengenai apakah suatu kejadian gempa memiliki karakteristik yang berbeda dibandingkan dengan pola kejadian gempa yang umum terjadi berdasarkan data historis. Oleh karena itu, diperlukan pendekatan analisis data yang dapat membantu mengidentifikasi karakteristik kejadian gempa secara lebih informatif.
+Berangkat dari permasalahan tersebut, penelitian ini bertujuan tidak hanya mengimplementasikan algoritma Isolation Forest pada dataset historis BMKG, tetapi juga mengintegrasikannya ke dalam sebuah purwarupa aplikasi mobile berbasis Android yang dinamakan Aplikasi AMANIN. Aplikasi ini dikembangkan sebagai sarana penyampaian informasi gempa yang memanfaatkan hasil analisis data historis. Untuk mendukung proses perancangan sistem, dilakukan analisis terhadap beberapa aplikasi informasi gempa dan kebencanaan yang telah tersedia. Analisis ini bertujuan untuk memahami karakteristik fitur yang telah ada serta mengidentifikasi kebutuhan yang dapat menjadi dasar pengembangan sistem pada penelitian ini. Hasil analisis tersebut ditunjukkan pada tabel berikut.
+Nama Aplikasi / Platform
+Fitur Utama
+Penyajian Anomali Seismik
+Keterbatasan
+
+BMKG
+
+
+
+
+InaRisk
+
+
+
+
+Berdasarkan hasil analisis terhadap aplikasi yang telah tersedia, Aplikasi AMANIN dirancang untuk menyediakan informasi gempa yang lebih informatif melalui pemanfaatan analisis data historis. Selain menampilkan informasi kejadian gempa, aplikasi ini juga menyajikan hasil deteksi anomali menggunakan algoritma Isolation Forest. Lebih lanjut, fitur analitik ini diwujudkan dalam bentuk mekanisme peringatan khusus, di mana aplikasi akan mengirimkan peringatan kepada pengguna apabila gempa bumi terbaru yang masuk ke dalam sistem terdeteksi sebagai suatu kejadian anomali. Kehadiran fitur tersebut diharapkan dapat membantu pengguna dalam memahami karakteristik suatu kejadian gempa berdasarkan pola yang ditemukan pada data historis, sehingga informasi yang diperoleh tidak hanya terbatas pada parameter kejadian gempa yang ditampilkan.
+Daftar Pustaka Bagian I.1:
+- Hariri, S., Kind, M. C., & Brunner, R. J. (2019). Extended Isolation Forest. IEEE Transactions on Knowledge and Data Engineering, 33(4), 1479-1489.
+- Nugraha, A., et al. (2018). Tectonic Implications and Seismic Hazard Assessments in Indonesia. Journal of Asian Earth Sciences, 154, 305-315.
+- Pratama, R., et al. (2020). Machine Learning Applications for Seismic Pattern Recognition and Anomaly Detection in High-Risk Zones. Seismological Research Letters, 91(2A), 920-932.
+- Setiawan, B., & Wibowo, A. (2023). Unsupervised Anomaly Detection in Indonesian Seismic Catalogs using Isolation Forest. Indonesian Journal of Computing and Cybernetics Systems, 17(1), 45-56.
+Rumusan Masalah
+Rumusan masalah yang mendasari penelitian ini adalah:
+Bagaimana cara mengidentifikasi kejadian gempa bumi anomali yang memiliki penyimpangan karakteristik dibandingkan dengan populasi pola data historis BMKG pada umumnya?
+Bagaimana efektivitas penerapan algoritma Isolation Forest dalam mendeteksi anomali seismisitas berdasarkan parameter magnitudo, kedalaman, latitude, dan longitude?
+Bagaimana mengintegrasikan hasil deteksi anomali menggunakan Isolation Forest ke dalam aplikasi Android sebagai media penyampaian informasi mitigasi gempa?
+Bagaimana merancang mekanisme penyajian informasi gempa yang mampu membedakan kejadian gempa anomali dan non-anomali secara otomatis pada aplikasi AMANIN?
+Bagaimana memvalidasi dan menginterpretasikan hasil skor anomali (anomaly score) dari model Isolation Forest untuk memastikan bahwa kejadian yang terdeteksi masuk akal secara karakteristik seismik?
+Tujuan Penelitian
+Berdasarkan rumusan masalah sebelumnya, tujuan penelitian dapat diuraikan sebagai berikut:
+Mengolah dan memanfaatkan data historis gempa bumi BMKG periode 2008–2026 sebagai sumber data dalam proses deteksi anomali gempa bumi.
+Menerapkan algoritma Isolation Forest pada data gempa bumi berdasarkan parameter magnitudo, kedalaman, latitude, dan longitude untuk mengidentifikasi kejadian gempa yang memiliki karakteristik berbeda dari pola kejadian gempa pada umumnya.
+Menganalisis hasil deteksi anomali yang dihasilkan oleh algoritma Isolation Forest melalui visualisasi dan interpretasi karakteristik data gempa yang teridentifikasi sebagai anomali.
+Mengintegrasikan hasil deteksi anomali menggunakan Isolation Forest ke dalam backend sistem guna mendukung pengolahan informasi pada Aplikasi AMANIN.
+Mengimplementasikan hasil deteksi anomali pada Aplikasi AMANIN sebagai sarana penyampaian informasi mitigasi gempa berbasis Android.
+Batasan Penelitian
+Penelitian ini dibatasi pada beberapa hal yaitu :
+Data yang digunakan dalam penelitian ini merupakan data historis gempa bumi yang diperoleh dari Badan Meteorologi, Klimatologi, dan Geofisika (BMKG) dengan rentang waktu pengamatan tahun 2008 hingga 2026.
+Analisis deteksi anomali dilakukan menggunakan empat parameter utama, yaitu magnitudo (magnitude), kedalaman (depth), garis lintang (latitude), dan garis bujur (longitude).
+Metode yang digunakan untuk mendeteksi anomali pada data gempa bumi adalah algoritma Isolation Forest sebagai pendekatan unsupervised learning.
+Penelitian ini tidak menggunakan proses pelabelan data (ground truth) maupun validasi berdasarkan interpretasi ahli seismologi, sehingga hasil deteksi anomali yang diperoleh digunakan sebagai hasil analisis berbasis model komputasional.
+Evaluasi hasil deteksi anomali dilakukan melalui analisis anomaly score, distribusi data, serta visualisasi hasil deteksi untuk memahami karakteristik data yang teridentifikasi sebagai anomali.
+Pengembangan sistem dibatasi pada integrasi hasil deteksi anomali ke dalam Aplikasi AMANIN berbasis Android sebagai media penyampaian informasi mitigasi gempa.
+Manfaat Penelitian
+Manfaat penelitian dibagi menjadi empat, yaitu:
+Penelitian ini dapat menjadi salah satu bentuk kontribusi akademik Universitas Telkom dalam pengembangan kajian dan implementasi sistem informasi berbasis analitik data untuk mitigasi bencana. Selain itu, hasil penelitian ini dapat memperkaya referensi karya ilmiah mahasiswa, khususnya yang berkaitan dengan pemodelan algoritma Machine Learning dan analisis data historis masif dalam konteks kebencanaan.
+Penelitian ini diharapkan dapat memberikan kontribusi dalam pengembangan pengetahuan di bidang sistem informasi, khususnya dalam pemanfaatan teknik pengolahan data dan Machine Learning untuk mengidentifikasi pola pada data gempa bumi. Selain itu, penelitian ini memberikan gambaran mengenai penerapan algoritma Isolation Forest sebagai metode deteksi anomali yang dapat digunakan untuk mengidentifikasi kejadian gempa dengan karakteristik yang berbeda dari pola umum serta mengintegrasikan hasil analisis tersebut ke dalam aplikasi berbasis Android.
+Hasil penelitian ini diharapkan dapat memberikan manfaat bagi masyarakat di berbagai kawasan rawan gempa di Indonesia melalui penyediaan landasan analitik cerdas yang berpotensi memperkuat sistem mitigasi bencana nasional. Dengan terdeteksinya anomali gempa secara presisi oleh sistem komputasional, institusi berwenang dapat merumuskan strategi penanggulangan yang lebih tajam, sehingga masyarakat pada akhirnya menerima peringatan dan informasi kesiapsiagaan yang lebih terukur secara langsung melalui platform interaktif seperti Aplikasi AMANIN.
+Penelitian ini dapat menjadi referensi dan bahan acuan bagi peneliti selanjutnya yang ingin mengembangkan atau mengkaji sistem pendeteksi anomali bencana berbasis data saintifik. Selain itu, penelitian ini dapat menjadi dasar untuk pengembangan penelitian lanjutan dengan cakupan pembandingan algoritma analitik lain, penambahan fitur parameter geofisika yang lebih kompleks, atau skala observasi spasial yang lebih luas.
+Sistematika Penulisan
+Penelitian ini diuraikan dengan sistematika penulisan sebagai berikut:
+Tabel I.1 Sistematika Penulisan
+BAB I
+PENDAHULUAN
+Bab ini menguraikan latar belakang masalah mengapa pendeteksian anomali pada data gempa bumi BMKG perlu dilakukan, rumusan masalah yang menjadi fokus penelitian, tujuan yang ingin dicapai, batasan-batasan teknis penelitian agar tetap fokus pada pemodelan komputasional (unsupervised learning), serta manfaat penelitian dan sistematika penulisan laporan.
+
+BAB II
+KAJIAN PUSTAKA
+Bab ini memaparkan landasan teori yang relevan dan mendasari penelitian ini. Konsep-konsep yang dibahas meliputi parameter dasar gempa bumi, pemanfaatan ilmu Data Science dalam geofisika, algoritma Machine Learning, serta penjelasan mendalam mengenai cara kerja dan konsep matematis algoritma Isolation Forest. Selain itu, bab ini juga menyajikan studi literatur terdahulu (state of the art) sebagai acuan komparatif riset.
+
+BAB III
+METODE PENYELESAIAN MASALAH
+Bab ini menjelaskan tahapan dan kerangka kerja metodologi riset secara sistematis. Pembahasan mencakup metode pengumpulan data historis dari katalog resmi BMKG (2008-2026), proses pra-pemrosesan data (data preprocessing), perancangan arsitektur pemodelan algoritma Isolation Forest, serta penentuan skenario pengujian dan parameter evaluasi performa model komputasional yang akan digunakan.
+
+BAB IV
+HASIL DAN PEMBAHASAN
+Bab ini memaparkan hasil implementasi dan eksperimen pengolahan data menggunakan metode yang telah dirancang. Pembahasan berfokus pada hasil deteksi anomali oleh Isolation Forest, analisis distribusi skor anomali (anomaly score), visualisasi pemisahan data normal dan anomali berdasarkan fitur seismik, serta interpretasi analitik dari hasil pemodelan tersebut.
+
+BAB V
+KESIMPULAN DAN SARAN
+Bab ini berisi kesimpulan akhir yang menjawab rumusan masalah dan tujuan penelitian berdasarkan hasil eksperimen pada bab sebelumnya. Selain itu, bab ini juga memuat saran-saran yang bersifat membangun untuk pengembangan, perbaikan, atau penelitian lanjutan di masa yang akan datang.
+
+TINJAUAN PUSTAKA
+Gempa Bumi
+Gempa bumi merupakan fenomena alam yang terjadi akibat pelepasan energi secara tiba-tiba di dalam kerak bumi, yang kemudian merambat ke permukaan dalam bentuk gelombang seismik. Fenomena ini tidak dapat dipisahkan dari dinamika geologi bumi, khususnya pergerakan lempeng tektonik yang terus berlangsung sepanjang waktu. Di wilayah dengan aktivitas tektonik tinggi, gempa bumi menjadi salah satu ancaman bencana alam utama yang berpotensi menimbulkan kerusakan fisik, korban jiwa, serta gangguan sosial dan ekonomi yang signifikan.
+Dalam konteks mitigasi bencana, pemahaman mengenai gempa bumi tidak cukup hanya sebatas pengenalan fenomenanya, tetapi juga harus mencakup mekanisme terjadinya gempa, karakteristik guncangan yang dihasilkan, serta dampaknya terhadap lingkungan dan infrastruktur. Pemahaman ini menjadi dasar penting dalam perancangan sistem mitigasi gempa, khususnya sistem berbasis teknologi informasi yang bertujuan untuk menyampaikan informasi risiko secara sederhana dan mudah dipahami oleh masyarakat.
+Sub-bab ini membahas konsep dasar gempa bumi dan mekanismenya, parameter-parameter yang digunakan untuk menggambarkan karakteristik gempa, serta dampak guncangan gempa terhadap lingkungan dan infrastruktur. Pembahasan ini menjadi landasan konseptual untuk memahami bagaimana risiko gempa dapat dianalisis dan disajikan dalam bentuk informasi yang relevan bagi pengguna aplikasi mitigasi gempa.
+Pengertian Gempa Bumi
+Gempa bumi adalah peristiwa alam yang ditandai dengan terjadinya getaran atau guncangan pada permukaan bumi akibat pelepasan energi dari dalam bumi. Energi gempa bumi dilepaskan ketika akumulasi tegangan pada zona patahan mencapai kondisi kritis sehingga memicu terjadinya pergeseran atau slip pada bidang sesar (Obara & Kato, 2016). Pelepasan energi ini kemudian merambat dalam bentuk gelombang seismik yang dapat drasakan di berbagai wilayah, tergantung pada kekuatan gempa dan kondisi geologi setempat.
+Secara umum, gempa bumi paling sering disebabkan oleh aktivitas tektonik, yaitu pergerakan lempeng-lempeng bumi yang saling berinteraksi. Lempeng tektonik bergerak secara perlahan namun terus-menerus, sehingga pada batas pertemuannya dapat terjadi akumulasi tegangan dalam jangka waktu yang panjang. Pelepasan tegangan yang terjadi secara tiba-tiba pada zona tektonik aktif, khususnya di wilayah subduksi, dapat memicu terjadinya gempa bumi tektonik berskala besar (Obara & Kato, 2016). Mekanisme ini dikenal sebagai gempa tektonik dan merupakan jenis gempa yang paling dominan serta berpotensi menimbulkan dampak besar.
+Selain gempa tektonik, terdapat pula gempa bumi yang disebabkan oleh aktivitas vulkanik, runtuhan, atau aktivitas manusia, seperti peledakan dan kegiatan pertambangan. Namun, dalam konteks risiko bencana berskala luas, gempa tektonik menjadi fokus utama karena energi yang dilepaskan cenderung lebih besar dan wilayah terdampaknya lebih luas.
+/
+Gambar  II1 Mekanisme terjadinya gempa
+Mekanisme terjadinya gempa bumi berkaitan erat dengan perilaku slip pada bidang patahan atau sesar yang dipengaruhi oleh kondisi tegangan dan sifat mekanik batuan (Obara & Kato, 2016). Sesar merupakan bidang retakan pada kerak bumi tempat terjadinya pergeseran massa batuan. Pergeseran ini dapat bersifat mendatar, naik, atau turun, tergantung pada arah gaya yang bekerja. Sesar Lembang merupakan sesar aktif di Jawa Barat yang membentang sepanjang ±29 km dari wilayah Padalarang hingga lereng barat Gunung Manglayang, dengan laju pergerakan sekitar 3 mm per tahun, sehingga kawasan di sekitarnya memiliki tingkat kerawanan gempa bumi yang tinggi (Qolbi dkk., 2024).
+Ketika gempa terjadi, energi dilepaskan dari zona sumber pada kedalaman tertentu di dalam bumi yang berkaitan dengan zona seismogenik aktif (Obara & Kato, 2016). Titik di permukaan bumi yang berada tepat di atas hiposentrum disebut episentrum. Jarak antara episentrum dengan suatu lokasi tertentu sangat memengaruhi tingkat guncangan yang dirasakan di lokasi tersebut. Semakin dekat suatu wilayah dengan episentrum, maka potensi guncangan yang dirasakan cenderung semakin besar.
+Gelombang seismik yang dihasilkan oleh gempa bumi merambat ke segala arah dan terdiri dari beberapa jenis gelombang, seperti gelombang primer (P), gelombang sekunder (S), dan gelombang permukaan. Gelombang permukaan memiliki peran dominan dalam menyebabkan getaran tanah karena amplitudonya yang relatif besar dan perambatannya yang terfokus di dekat permukaan bumi, sehingga berkontribusi signifikan terhadap respons tanah dan potensi kerusakan infrastruktur (Nishida, 2017). Karakteristik rambatan gelombang ini dipengaruhi oleh kondisi geologi, jenis tanah, dan struktur batuan di suatu wilayah.
+Pemahaman mengenai mekanisme gempa bumi menjadi penting dalam konteks mitigasi bencana karena perilaku slip patahan dan dinamika tegangan dapat digunakan untuk mendukung analisis bahaya seismik (Obara & Kato, 2016). Informasi mengenai lokasi sesar aktif, kedalaman sumber gempa, serta karakteristik rambatan gelombang dapat digunakan sebagai dasar dalam analisis risiko dan penyusunan strategi mitigasi. Dalam penelitian ini, pemahaman tersebut menjadi dasar konseptual untuk menjelaskan mengapa wilayah Sesar Lembang memiliki tingkat kerentanan gempa yang tinggi dan memerlukan sistem mitigasi yang dirancang secara khusus.
+Parameter Dasar Gempa Bumi
+Dalam kajian gempa bumi, fenomena guncangan tidak dapat dipahami hanya berdasarkan kejadian gempa itu sendiri, tetapi perlu dijelaskan melalui sejumlah parameter yang digunakan untuk menggambarkan karakteristik gempa secara kuantitatif dan kualitatif. Parameter-parameter dasar gempa bumi berperan penting dalam menjelaskan besarnya energi yang dilepaskan, lokasi sumber gempa, kedalaman, serta tingkat guncangan yang dirasakan di suatu wilayah. Pemahaman terhadap parameter gempa menjadi landasan penting dalam analisis risiko gempa dan penyusunan informasi mitigasi yang relevan bagi masyarakat, terutama dalam meningkatkan kesadaran dan kesiapsiagaan terhadap bencana di wilayah rawan gempa (Qolbi dkk., 2024).
+Salah satu parameter yang paling dikenal dalam kajian gempa bumi adalah magnitudo. Magnitudo menggambarkan besarnya energi yang dilepaskan oleh gempa bumi pada sumbernya dan digunakan sebagai ukuran kekuatan gempa secara kuantitatif. (Kiswiranti, 2019). Nilai magnitudo bersifat logaritmik, sehingga peningkatan satu satuan magnitudo menunjukkan peningkatan energi yang dilepaskan dalam jumlah yang sangat signifikan. Magnitudo sering digunakan untuk mengklasifikasikan gempa berdasarkan skala kekuatannya, mulai dari gempa kecil yang tidak dirasakan hingga gempa besar yang berpotensi menimbulkan kerusakan luas.
+Meskipun magnitudo sering dijadikan acuan utama dalam pemberitaan gempa, parameter ini tidak secara langsung menggambarkan tingkat kerusakan atau dampak yang terjadi di suatu lokasi tertentu (Kiswiranti, 2019). Gempa dengan magnitudo yang sama dapat menimbulkan dampak yang berbeda-beda, tergantung pada kondisi lingkungan, jarak terhadap sumber gempa, dan karakteristik wilayah yang terdampak. Oleh karena itu, penggunaan magnitudo saja tidak cukup untuk menjelaskan risiko gempa secara komprehensif.
+Untuk memperjelas keterkaitan antara magnitudo, intensitas gempa, serta parameter lain yang mempengaruhi dampak guncangan di suatu wilayah, perbandingan parameter gempa bumi disajikan pada Tabel II.1.
+Tabel II.1 Keterkaitan parameter yang mempengaruhi dampak guncangan
+Parameter
+Definisi Singkat
+Skala / Satuan
+Dipengaruhi Faktor Lain
+Hubungan dengan Dampak
+
+Magnitudo
+Ukuran energi yang dilepaskan di sumber
+Mw
+
+Kedalaman, jarak, kondisi tanah
+Tidak langsung. gempa bermagnitudo dapat menimbulkan dampak berbeda
+
+Intensitas
+Tingkat guncangan dan kerusakan di suatu lokasi
+Skala MMI
+Jarak, kondisi geologi, kualitas bangunan
+Sangat langsung berkaitan dengan kerusakan dan pengalaman manusia
+
+Kedalaman Gempa
+Jarak sumber gempa dari permukaan bumi
+Kilometer (km)
+Struktur geologi bawah permukaan
+Gempa dangkal cenderung lebih merusak
+
+Jarak ke Episentrum
+Jarak lokasi terhadap titik episentrum
+Kilometer (km)
+Arah rambatan gelombang
+Semakin dekat, potensi guncangan meningkat
+
+Kondisi Tanah
+Karakteristik lapisan tanah di permukaan
+Kualitatif (lunak-keras)
+Kandungan air, dan struktur tanah
+Tanah lunak dapat memperkuat guncangan
+
+Parameter penting lainnya adalah kedalaman gempa, yang menunjukkan jarak antara hiposentrum gempa dengan permukaan bumi. Kedalaman gempa sangat mempengaruhi intensitas guncangan yang dirasakan di permukaan, di mana gempa dangkal umumnya menimbulkan guncangan yang lebih kuat dibandingkan gempa dalam (Kiswiranti, 2019). Gempa dangkal umumnya menghasilkan guncangan yang lebih kuat dan merusak dibandingkan gempa dalam, meskipun memiliki magnitudo yang relatif sama. Hal ini disebabkan oleh jarak rambatan gelombang seismik yang lebih pendek sehingga energi yang dilepaskan belum banyak tereduksi sebelum mencapai permukaan.
+Selain kedalaman, jarak lokasi terhadap episentrum juga menjadi parameter yang menentukan tingkat guncangan yang dirasakan. Wilayah yang berada lebih dekat dengan episentrum cenderung mengalami guncangan yang lebih kuat dibandingkan wilayah yang berada lebih jauh akibat berkurangnya amplitudo gelombang seismik selama proses penjalaran (Kiswiranti, 2019). Namun, hubungan antara jarak dan dampak guncangan tidak selalu bersifat linier, karena masih dipengaruhi oleh faktor lain seperti kondisi geologi dan jenis tanah.
+Untuk menggambarkan tingkat guncangan yang dirasakan di permukaan bumi, digunakan parameter intensitas gempa. Intensitas berbeda dengan magnitudo karena intensitas menggambarkan dampak gempa di suatu lokasi tertentu berdasarkan efek yang dirasakan dan kerusakan yang ditimbulkan, bukan energi yang dilepaskan di sumber gempa (Kiswiranti, 2019). Intensitas biasanya dinyatakan dalam skala tertentu yang menggambarkan tingkat guncangan dan kerusakan, mulai dari getaran yang hampir tidak terasa hingga kerusakan berat pada bangunan dan infrastruktur.
+Parameter intensitas memiliki keterkaitan langsung dengan pengalaman manusia dan kondisi bangunan di lapangan. Oleh karena itu, intensitas gempa sering dianggap lebih relevan dalam konteks mitigasi bencana, terutama ketika tujuan sistem mitigasi adalah menyampaikan informasi risiko yang mudah dipahami dan dapat meningkatkan kewaspadaan masyarakat di wilayah rawan gempa (Qolbi dkk., 2024). Intensitas gempa memberikan gambaran yang lebih nyata mengenai apa yang mungkin dialami pengguna di suatu lokasi tertentu ketika gempa terjadi.
+Selain parameter-parameter utama tersebut, kondisi geologi lokal juga merupakan faktor penting yang mempengaruhi karakteristik guncangan gempa. Jenis tanah, struktur batuan, dan kondisi lapisan bawah permukaan dapat memperkuat atau meredam guncangan gempa. Wilayah dengan tanah lunak, misalnya, cenderung mengalami amplifikasi guncangan yang lebih besar dibandingkan wilayah dengan batuan keras. Fenomena ini menyebabkan tingkat kerusakan yang berbeda meskipun wilayah tersebut berada pada jarak yang relatif sama dari episentrum.
+Karakteristik bangunan juga tidak dapat dilepaskan dari pembahasan parameter gempa. Kualitas konstruksi, jenis material, dan desain bangunan sangat mempengaruhi respon bangunan terhadap guncangan gempa. Bangunan yang tidak dirancang sesuai dengan standar ketahanan gempa memiliki risiko kerusakan yang lebih tinggi, bahkan pada gempa dengan intensitas sedang. Oleh karena itu, parameter gempa perlu dipahami dalam kaitannya dengan kondisi bangunan dan lingkungan sekitar.
+Dalam konteks mitigasi gempa, parameter-parameter dasar gempa bumi tersebut tidak berdiri sendiri, melainkan saling berinteraksi dalam sistem seismik yang kompleks, sehingga tingkat risiko suatu wilayah tidak dapat dijelaskan hanya berdasarkan satu parameter tunggal (Obara & Kato, 2016). Tingkat risiko gempa di suatu wilayah dipengaruhi oleh berbagai faktor, termasuk karakteristik guncangan gempa serta kondisi lingkungan dan bangunan yang terdampak. Pemahaman terhadap parameter gempa menjadi dasar dalam menyusun informasi risiko yang lebih terukur dan kontekstual.
+Bagi sistem mitigasi gempa berbasis aplikasi, parameter dasar gempa bumi memiliki peran strategis dalam menyajikan informasi risiko yang relevan dan mudah dipahami oleh pengguna, sehingga dapat meningkatkan kesadaran dan kesiapsiagaan masyarakat di wilayah rawan gempa (Qolbi dkk., 2024). Alih-alih hanya menampilkan data mentah seperti magnitudo dan lokasi gempa, sistem mitigasi perlu mengaitkan parameter tersebut dengan potensi dampak yang mungkin terjadi di lokasi pengguna. Dengan demikian, informasi gempa tidak hanya bersifat informatif, tetapi juga edukatif dan aplikatif dalam mendukung peningkatan kesiapsiagaan masyarakat terhadap risiko gempa di wilayah rawan sesar aktif (Qolbi dkk., 2024).
+Pembahasan mengenai parameter dasar gempa bumi dalam sub-bab ini menjadi landasan penting untuk memahami bagaimana risiko gempa dapat dianalisis dan dikomunikasikan secara lebih efektif. Pemahaman ini selanjutnya menjadi dasar konseptual dalam pengembangan pendekatan prediksi probabilitas dampak guncangan gempa yang dibahas pada bagian-bagian berikutnya dalam tinjauan pustaka.
+Sistem Informasi dan Aplikasi Android dalam Mitigasi Gempa
+Penelitian ini mengadopsi pendekatan mitigasi non-struktural yang berfokus pada peningkatan kapasitas masyarakat dalam memahami risiko dan mengambil keputusan yang tepat saat menghadapi ancaman gempa. Berbeda dengan mitigasi struktural yang menekankan pada rekayasa fisik bangunan, pendekatan non-struktural melalui pemanfaatan teknologi informasi bertujuan menjembatani kesenjangan antara data teknis kebencanaan dengan pemahaman masyarakat awam.
+Penerapan strategi ini dipilih karena dinilai lebih fleksibel dan mampu menjangkau masyarakat secara luas tanpa memerlukan intervensi konstruksi fisik yang memakan biaya besar. Dalam konteks kawasan Sesar Lembang, penyampaian informasi risiko yang terstruktur melalui sistem digital diharapkan mampu meningkatkan kesiapsiagaan masyarakat secara signifikan. Sub-bab ini selanjutnya akan menguraikan komponen utama sistem yang dikembangkan, mulai dari konsep sistem informasi kebencanaan, pemilihan platform Android, hingga integrasi fitur prediksi di dalamnya.
+Untuk memperjelas posisi sistem informasi sebagai bagian dari pendekatan mitigasi non-struktural, perbandingan pendekatan mitigasi gempa disajikan pada Tabel II.2 sebagai dasar penentuan pendekatan sistem mitigasi gempa yang dikembangkan.
+Tabel II.2 Tabel perbandingan mitigasi struktural dan non-struktural
+Aspek Perbandingan
+Mitigasi Struktural
+Mitigasi Non-Struktural
+
+Pengertian
+Pendekatan mitigasi yang dilakukan melalui pembangunan atau penguatan fisik bangunan dan infrastruktur untuk mengurangi dampak guncangan gempa
+Pendekatan mitigasi yang dilakukan melalui kebijakan, edukasi, penyampaian informasi, dan sistem pendukung tanpa intervensi fisik terhadap bangunan
+
+Fokus Utama
+Ketahanan fisik bangunan dan infrastruktur
+Pemahaman masyarakat, penyampaian informasi risiko, dan peningkatan kesiapsiagaan
+
+Bentuk Implementasi
+Penguatan struktur bangunan, penerapan standar bangunan tahan gempa, dan rekayasa teknik
+Edukasi masyarakat, penyampaian informasi mitigasi dan risiko, serta pemanfaatan sistem informasi kebencanaan
+
+Kebutuhan Biaya
+Relatif tinggi karena melibatkan intervensi fisik dan konstruksi
+Relatif lebih rendah karena berfokus pada informasi dan sistem digital
+
+Fleksibilitas Penerapan
+Terbatas pada kondisi fisik dan lokasi tertentu
+Lebih fleksibel dan dapat diterapkan secara luas kepada masyarakat
+
+Waktu Implementasi
+Jangka menengah hingga panjang
+Dapat diterapkan dalam jangka pendek
+
+Peran Teknologi Informasi
+Tidak dominan
+Sangat dominan sebagai media penyampaian informasi dan analisis risiko
+
+Berdasarkan perbandingan tersebut, penelitian ini memilih pendekatan mitigasi non-struktural berbasis sistem informasi karena lebih sesuai dengan tujuan peningkatan pemahaman pengguna dan penyajian informasi risiko secara kontekstual.
+Sistem Informasi Kebencanaan
+Sistem informasi kebencanaan merupakan sistem yang dirancang untuk mengelola, mengolah, dan menyajikan informasi yang berkaitan dengan potensi bahaya, risiko, serta dampak bencana. Sistem ini berfungsi sebagai sarana pendukung pengambilan keputusan, baik bagi pemerintah, lembaga terkait, maupun masyarakat sebagai pengguna akhir. Dalam konteks gempa bumi, sistem informasi kebencanaan berperan dalam menyampaikan informasi mengenai potensi gempa, panduan mitigasi, serta kondisi risiko di suatu wilayah.
+Salah satu karakteristik utama sistem informasi kebencanaan adalah kemampuannya dalam mengintegrasikan berbagai jenis data, seperti data spasial, data lingkungan, dan data sosial. Integrasi data ini memungkinkan penyajian informasi yang lebih komprehensif dan kontekstual. Informasi yang disajikan tidak hanya menjelaskan bahwa suatu wilayah berisiko, tetapi juga memberikan gambaran mengenai faktor-faktor yang memengaruhi tingkat risiko tersebut.
+Keandalan dan kejelasan informasi menjadi aspek krusial dalam sistem informasi kebencanaan. Informasi yang tidak akurat atau disajikan secara ambigu dapat menimbulkan kebingungan dan menurunkan kepercayaan masyarakat terhadap sistem. Oleh karena itu, sistem informasi kebencanaan perlu dirancang dengan memperhatikan kualitas data, konsistensi penyajian, serta kemudahan interpretasi oleh pengguna dengan latar belakang yang beragam.
+Selain sebagai media penyampaian informasi, sistem informasi kebencanaan juga berperan dalam meningkatkan kesadaran dan pemahaman masyarakat terhadap risiko bencana. Penyajian informasi yang berkelanjutan dan mudah diakses dapat membantu masyarakat mengenali potensi bahaya di lingkungan mereka, sehingga kesiapsiagaan tidak hanya muncul saat terjadi bencana, tetapi juga menjadi bagian dari kesadaran sehari-hari.
+Dalam penelitian ini, sistem informasi kebencanaan dipandang sebagai fondasi dalam pengembangan aplikasi mitigasi gempa. Sistem yang dikembangkan diharapkan mampu menyajikan informasi mitigasi secara terstruktur, mudah dipahami, dan relevan dengan kebutuhan masyarakat di kawasan rawan gempa, khususnya di wilayah Sesar Lembang.
+Aplikasi Berbasis Android sebagai Media Mitigasi
+Aplikasi berbasis Android menjadi salah satu platform yang paling potensial dalam penyampaian informasi mitigasi gempa kepada masyarakat. Tingginya tingkat penggunaan perangkat Android dalam kehidupan sehari-hari menjadikan aplikasi mobile sebagai media yang relatif dekat dan familiar bagi masyarakat. Melalui aplikasi Android, informasi mitigasi dapat diakses secara praktis tanpa memerlukan perangkat khusus atau keahlian teknis yang tinggi.
+Keunggulan aplikasi Android sebagai media mitigasi terletak pada fleksibilitas dan kemampuannya dalam menyajikan informasi secara interaktif. Aplikasi dapat dirancang untuk menampilkan informasi dalam berbagai bentuk, seperti teks, visual, dan notifikasi, sehingga memudahkan pengguna dalam memahami pesan yang disampaikan. Selain itu, aplikasi mobile memungkinkan penyampaian informasi secara personal, misalnya berdasarkan lokasi atau kondisi pengguna.
+Namun, pemanfaatan aplikasi Android dalam mitigasi gempa juga menghadapi sejumlah tantangan. Salah satu tantangan utama adalah aspek kemudahan penggunaan. Aplikasi dengan antarmuka yang kompleks atau penyajian informasi yang terlalu teknis berpotensi sulit digunakan oleh masyarakat dengan tingkat literasi teknologi yang beragam. Kondisi ini dapat menyebabkan aplikasi mitigasi tidak dimanfaatkan secara optimal, meskipun informasi yang disediakan sebenarnya penting.
+Oleh karena itu, perancangan aplikasi mitigasi gempa perlu mengedepankan prinsip user-centered design, yaitu pendekatan yang menempatkan pengguna sebagai pusat dalam proses perancangan sistem. Informasi yang disajikan perlu disesuaikan dengan kebutuhan, kemampuan, dan konteks pengguna, sehingga aplikasi dapat digunakan secara efektif dalam situasi normal maupun darurat.
+Dalam penelitian ini, aplikasi berbasis Android diposisikan sebagai media utama dalam penyampaian informasi mitigasi gempa. Aplikasi yang dikembangkan diharapkan tidak hanya berfungsi sebagai sumber informasi, tetapi juga sebagai alat bantu bagi masyarakat untuk memahami risiko gempa dan meningkatkan kesiapsiagaan mereka secara mandiri.
+Integrasi Sistem Prediksi dalam Aplikasi Mobile
+Integrasi sistem prediksi ke dalam aplikasi mobile merupakan langkah pengembangan lanjutan yang bertujuan untuk meningkatkan nilai informatif sistem mitigasi gempa. Berbeda dengan aplikasi mitigasi yang hanya menyajikan informasi umum atau data kejadian gempa, keberadaan sistem prediksi memungkinkan aplikasi untuk memberikan gambaran risiko yang lebih kontekstual berdasarkan parameter tertentu. Dengan demikian, aplikasi tidak hanya berfungsi sebagai media informasi, tetapi juga sebagai alat bantu analisis sederhana yang mendukung pemahaman risiko gempa di suatu wilayah.
+Dalam konteks mitigasi gempa, sistem prediksi digunakan untuk memperkirakan potensi dampak guncangan berdasarkan karakteristik gempa dan kondisi lingkungan yang relevan. Prediksi ini tidak dimaksudkan untuk menentukan kepastian terjadinya dampak, melainkan untuk memberikan estimasi probabilistik yang dapat membantu pengguna memahami tingkat kerentanan wilayahnya. Informasi prediktif tersebut berperan sebagai pendukung dalam meningkatkan kewaspadaan dan kesiapsiagaan masyarakat terhadap kemungkinan dampak gempa bumi.
+Penerapan sistem prediksi dalam aplikasi mobile perlu mempertimbangkan bagaimana hasil prediksi disampaikan kepada pengguna. Penyajian hasil prediksi dalam bentuk angka teknis atau istilah ilmiah berpotensi sulit dipahami oleh masyarakat awam. Oleh karena itu, hasil prediksi perlu dikomunikasikan dalam bentuk yang lebih sederhana dan intuitif, seperti kategori tingkat risiko atau penjelasan naratif yang relevan dengan kondisi pengguna, sehingga informasi yang disampaikan dapat dipahami dengan baik tanpa memerlukan pemahaman teknis yang mendalam.
+Selain aspek penyajian, penting untuk menempatkan sistem prediksi sebagai fitur pendukung dalam sistem mitigasi, bukan sebagai satu-satunya dasar pengambilan keputusan. Pengguna perlu memahami bahwa hasil prediksi bersifat estimatif dan dipengaruhi oleh keterbatasan data serta asumsi yang digunakan dalam model. Oleh karena itu, informasi prediktif perlu dilengkapi dengan panduan mitigasi dan kesiapsiagaan yang jelas agar tidak menimbulkan kesalahpahaman atau rasa aman yang semu.
+Dalam penelitian ini, integrasi sistem prediksi dipandang sebagai upaya untuk memperkaya fungsi aplikasi mitigasi gempa berbasis Android melalui penyajian informasi risiko yang lebih terukur. Sistem prediksi digunakan untuk menyampaikan probabilitas dampak guncangan gempa secara informatif dan mudah dipahami, sehingga masyarakat dapat memperoleh gambaran risiko yang lebih personal. Pendekatan ini diharapkan dapat mendukung peningkatan pemahaman dan kesiapsiagaan masyarakat di kawasan rawan gempa tanpa menuntut pengguna untuk memahami aspek teknis analisis seismik secara mendalam.
+Penyajian Informasi Mitigasi Gempa pada Aplikasi Android
+Meskipun aplikasi mitigasi gempa berbasis Android telah tersedia dan digunakan secara luas, pendekatan penyajian informasi yang digunakan masih berfokus pada data kejadian dan pemetaan risiko secara umum. Oleh karena itu, diperlukan analisis terhadap aplikasi eksisting untuk mengidentifikasi keterbatasan dalam penyajian informasi dampak guncangan dan peluang pengembangan fitur prediktif yang lebih kontekstual.
+Sebagai bagian dari kajian aplikasi eksisting, dilakukan perbandingan fitur pada aplikasi mitigasi dan informasi gempa yang telah tersedia, yaitu aplikasi BMKG dan InaRISK. Perbandingan ini difokuskan pada fitur-fitur yang berkaitan dengan penyajian informasi gempa, mitigasi bencana, serta dukungan terhadap analisis risiko bagi pengguna. Tujuan dari perbandingan ini adalah untuk mengidentifikasi cakupan dan keterbatasan fitur yang telah disediakan oleh aplikasi eksisting, sehingga dapat terlihat kebutuhan pengembangan sistem yang mampu menyajikan informasi dampak guncangan gempa secara lebih komprehensif dan prediktif.
+Tabel II.3 Perbandingan fitur aplikasi existing
+Fitur Mitigasi Gempa
+BMKG
+InaRISK
+
+Informasi kejadian gempa real-time
+✔
+✔
+
+Penyajian lokasi episenter gempa
+✔
+✔
+
+Informasi magnitudo dan kedalaman
+✔
+✔
+
+Visualisasi peta seismik / risiko
+Terbatas
+✔
+
+Informasi potensi dampak gempa
+Terbatas
+✔
+
+Peta risiko bencana berbasis wilayah
+✘
+✔
+
+Informasi mitigasi pra-bencana
+✔
+✔
+
+Informasi mitigasi pasca-bencana
+✔
+✔
+
+Pendekatan prediktif berbasis model
+✘
+✘
+
+Prediksi probabilitas dampak guncangan
+✘
+✘
+
+Personalisasi risiko berdasarkan lokasi pengguna
+✘
+Terbatas
+
+Platform Android
+✔
+✔
+
+Berdasarkan hasil perbandingan fitur pada tabel tersebut, dapat dilihat bahwa aplikasi eksisting telah menyediakan berbagai fitur terkait informasi kejadian gempa dan mitigasi bencana secara umum. Namun, fitur yang berfokus pada analisis prediktif, khususnya penyajian probabilitas dampak guncangan gempa terhadap suatu wilayah, belum tersedia secara eksplisit. Hal ini menunjukkan bahwa sistem yang ada masih berorientasi pada penyampaian informasi dan pemetaan risiko, sehingga diperlukan pengembangan aplikasi yang mampu memberikan estimasi dampak guncangan secara lebih terukur dan berbasis model.
+Prediksi Probabilitas Dampak Gempa
+Dalam usaha mengurangi dampak gempa bumi, penyampaian informasi harus meliputi tidak hanya peristiwa gempa itu sendiri, tetapi juga kemungkinan dampak yang bisa terjadi di suatu daerah. Informasi tentang tingkat risiko dan kemungkinan efek dari guncangan menjadi penting karena dapat membantu masyarakat memahami bahaya gempa dengan lebih baik dan sesuai dengan kondisi tempat tinggal mereka. Oleh karena itu, pendekatan yang prediktif digunakan untuk menghubungkan data teknis mengenai gempa dengan kebutuhan akan informasi praktis dan kontekstual bagi masyarakat, terutama melalui penyampaian informasi mengenai risiko dan dampak yang relevan untuk pengambilan keputusan dalam mitigasi bencana.
+Prediksi dalam konteks pengurangan risiko gempa tidak bertujuan untuk meramalkan kapan gempa akan terjadi secara akurat, tetapi lebih kepada memperkirakan dampak yang mungkin timbul berdasarkan berbagai parameter terkait gempa dan kerentanan daerah yang dinilai secara probabilistik sebagai bagian dari penilaian risiko seismik. Hasil dari prediksi ini bersifat estimasi dan probabilistik, sehingga harus dipahami sebagai alat bantu dalam membuat keputusan menuju mitigasi dan perencanaan kebencanaan, bukan sebagai kepastian mengenai apa yang akan terjadi akibat gempa. Pendekatan tersebut selaras dengan prinsip pengurangan risiko bencana yang menekankan pentingnya pemahaman dan kesiapsiagaan dalam mengurangi risiko.
+Dalam sistem mitigasi gempa berbasis aplikasi, prediksi probabilitas dampak digunakan untuk memberikan informasi risiko dengan lebih jelas dan mudah dipahami oleh pengguna, sehingga membantu meningkatkan kesadaran masyarakat terhadap risiko dan kesiapan menghadapi gempa bumi (Qolbi dkk., 2024). Dengan pendekatan ini, sistem tidak hanya menampilkan data gempa saja, tetapi juga memandu pengguna dalam memahami bagaimana data tersebut berdampak pada kondisi sekitar dan bangunan mereka.
+Konsep Prediksi dalam Sistem Mitigasi
+Prediksi dalam sistem pengurangan risiko gempa berkaitan dengan usaha untuk memperkirakan kemungkinan efek dari guncangan gempa berdasarkan data dan informasi yang ada. Proses ini dilakukan dengan memanfaatkan hubungan antara sifat-sifat gempa, kondisi lingkungan, serta faktor kerentanan dari bangunan dan area yang mempengaruhi seberapa besar dampak guncangan gempa (Riedel dkk., 2015). Dalam hal pengurangan risiko, prediksi ini berperan sebagai alat untuk menganalisis risiko yang digunakan dalam perencanaan mitigasi dan untuk meningkatkan kesiapan masyarakat menghadapi kemungkinan dampak dari gempa (Mase, 2020).
+Berbeda dengan prediksi tentang kapan dan di mana gempa akan terjadi, prediksi dampak gempa lebih fokus pada akibat yang bisa muncul akibat guncangan tersebut. Pendekatan prediksi dampak ini dianggap lebih penting bagi masyarakat karena secara langsung berhubungan dengan keamanan, besarnya kerusakan bangunan, serta kemungkinan kerugian yang bisa dialami akibat guncangan gempa (Riedel dkk., 2015).
+Dalam sistem mitigasi, ramalan digunakan untuk mengubah informasi teknis menjadi data yang lebih berarti. Faktor-faktor seperti kekuatan gempa, kedalaman, dan jarak dari pusat gempa bisa digabungkan dengan faktor lingkungan dan ciri-ciri bangunan untuk menilai seberapa besar dampak dan seberapa rentan suatu daerah (Riedel dkk., 2015). Data ini kemudian bisa disajikan dalam format yang lebih mudah dipahami, seperti kategori risiko atau kemungkinan terjadinya kerusakan.
+Ramalan dalam mitigasi juga terkait dengan cara menghadapi ketidakpastian. Data mengenai gempa dan kondisi lingkungan memiliki tingkat ketidakpastian, sehingga hasil ramalan tidak bisa dianggap sebagai kebenaran yang mutlak. Karena itu, dalam sistem mitigasi, ramalan harus disampaikan dengan jelas bahwa informasi yang diberikan bersifat perkiraan dan berdasarkan kemungkinan, serta bisa dipakai sebagai petunjuk untuk meningkatkan kewaspadaan dan persiapan, bukan sebagai angka pasti (Riedel dkk., 2015).
+Penerapan gagasan memprediksi dalam sistem penanggulangan gempa bertujuan untuk membantu masyarakat memahami bahaya secara lebih dekat dan sesuai dengan kondisi mereka. Informasi yang bisa memprediksi kejadian gempa dan relevan dengan situasi pengguna dapat meningkatkan kesadaran akan bahaya serta mendorong tindakan persiapan yang lebih baik ketika terjadi gempa (Qolbi dkk., 2024). Dalam penelitian ini, konsep prediksi digunakan sebagai dasar pengembangan fitur analisis yang sederhana, sehingga bisa membantu menyampaikan informasi tentang penanggulangan gempa dalam aplikasi berbasis Android.
+Prediksi Probabilitas sebagai Pendekatan Risiko
+Pendekatan probabilitas dalam prediksi dampak gempa digunakan untuk menggambarkan tingkat kemungkinan terjadinya suatu dampak, bukan untuk menentukan kepastian kejadian. Dalam konteks mitigasi bencana, pendekatan ini dianggap lebih realistis karena fenomena gempa bumi dan dampaknya dipengaruhi oleh banyak faktor yang tidak sepenuhnya dapat diprediksi secara deterministik. Oleh karena itu, risiko gempa lebih tepat dipahami sebagai kemungkinan terjadinya dampak tertentu dengan tingkat peluang tertentu, yang dievaluasi melalui pendekatan probabilistik dalam analisis risiko seismik (Riedel dkk., 2015).
+Prediksi probabilitas memungkinkan sistem mitigasi gempa untuk menyajikan informasi risiko dalam bentuk yang lebih terukur. Alih-alih menyatakan bahwa suatu wilayah pasti akan mengalami kerusakan, Sistem dapat memberikan gambaran mengenai peluang terjadinya dampak ringan, sedang, atau berat berdasarkan tingkat kerentanan bangunan dan karakteristik guncangan gempa (Riedel dkk., 2015). Informasi probabilistik ini membantu pengguna memahami tingkat risiko tanpa menimbulkan kepanikan yang berlebihan.
+Pendekatan probabilitas sejalan dengan konsep risiko bencana yang didefinisikan sebagai kombinasi antara bahaya seismik, kerentanan bangunan, dan tingkat paparan wilayah (Mase, 2020). Bahaya gempa menggambarkan potensi terjadinya guncangan, sementara kerentanan dan paparan menggambarkan sejauh mana lingkungan dan masyarakat dapat terdampak. Dengan pendekatan probabilistik, ketiga komponen tersebut dapat dipertimbangkan secara bersamaan dalam penyajian informasi risiko.
+Dalam sistem mitigasi gempa berbasis aplikasi, prediksi probabilitas memiliki keunggulan dalam hal komunikasi risiko karena mampu menyajikan estimasi dampak secara terukur dan berbasis analisis kerentanan (Mase, 2020). Informasi probabilistik dapat disajikan dalam bentuk visual sederhana atau kategori risiko yang mudah dipahami oleh masyarakat awam. Penyajian seperti ini membantu pengguna mengaitkan informasi teknis dengan kondisi nyata yang mungkin mereka hadapi, sehingga informasi mitigasi menjadi lebih relevan dan bermakna.
+Namun demikian, penggunaan prediksi probabilitas juga memiliki tantangan tersendiri. Pengguna perlu memahami bahwa probabilitas bukanlah kepastian, melainkan estimasi yang dihasilkan dari data dan asumsi tertentu dalam analisis risiko seismik (Riedel dkk., 2015). Oleh karena itu, sistem mitigasi perlu menyertakan penjelasan yang jelas mengenai arti probabilitas dan keterbatasan hasil prediksi, agar informasi tidak disalahartikan.
+Dalam penelitian ini, prediksi probabilitas digunakan sebagai pendekatan untuk menyampaikan risiko dampak guncangan gempa secara informatif dan kontekstual. Pendekatan ini diharapkan dapat membantu masyarakat memahami tingkat risiko yang mungkin dihadapi dan mendorong peningkatan kesiapsiagaan tanpa bergantung pada interpretasi teknis yang kompleks.
+Variabel Penentu Dampak Guncangan Gempa
+Dampak guncangan gempa tidak ditentukan oleh satu faktor tunggal, melainkan merupakan hasil interaksi dari berbagai variabel yang saling berkaitan. Pemahaman mengenai variabel-variabel penentu dampak guncangan menjadi penting dalam proses prediksi risiko, karena variabel tersebut digunakan sebagai dasar dalam memperkirakan tingkat dampak yang mungkin terjadi di suatu wilayah berdasarkan analisis kerentanan dan bahaya seismik (Riedel dkk., 2015).
+Salah satu variabel utama yang memengaruhi dampak guncangan gempa adalah karakteristik gempa, yang meliputi magnitudo, kedalaman, dan jarak terhadap sumber gempa. Magnitudo menggambarkan besarnya energi yang dilepaskan, sementara kedalaman dan jarak memengaruhi intensitas guncangan yang dirasakan di permukaan. Kombinasi parameter magnitudo, kedalaman gempa, dan jarak terhadap sumber gempa memberikan gambaran awal mengenai potensi guncangan dan tingkat bahaya seismik yang dapat terjadi di suatu lokasi (Mase, 2020).
+Selain karakteristik gempa, kondisi geologi lokal juga berperan penting dalam menentukan tingkat dampak. Jenis tanah, struktur batuan, dan kondisi lapisan bawah permukaan dapat memperkuat atau meredam guncangan gempa. Wilayah dengan tanah lunak cenderung mengalami amplifikasi guncangan yang lebih besar, sehingga risiko kerusakan bangunan menjadi lebih tinggi dibandingkan wilayah dengan kondisi geologi yang lebih stabil, sebagaimana ditunjukkan dalam analisis bahaya dan kerentanan seismik wilayah perkotaan (Mase, 2020).
+Variabel lain yang tidak kalah penting adalah karakteristik bangunan. Jenis bangunan, material konstruksi, usia bangunan, dan kualitas perencanaan struktural memengaruhi kemampuan bangunan dalam menahan guncangan gempa. Bangunan yang tidak dirancang dengan mempertimbangkan ketahanan gempa memiliki tingkat kerentanan yang lebih tinggi, sehingga potensi kerusakan akibat guncangan gempa menjadi lebih besar, terutama pada wilayah dengan stok bangunan eksisting yang beragam (Riedel dkk., 2015).
+Selain faktor fisik, faktor lingkungan dan kepadatan penduduk juga memengaruhi tingkat dampak gempa. Wilayah dengan kepadatan penduduk dan bangunan yang tinggi berpotensi mengalami dampak sosial dan ekonomi yang lebih besar ketika gempa terjadi, seiring meningkatnya tingkat paparan terhadap bahaya seismik (Riedel dkk., 2015). Kepadatan bangunan dan keterbatasan ruang evakuasi dapat memperparah dampak guncangan, terutama di kawasan perkotaan.
+Dalam konteks sistem mitigasi gempa berbasis aplikasi, pemilihan variabel penentu dampak perlu disesuaikan dengan tujuan sistem dan ketersediaan data. Tidak semua variabel perlu digunakan dalam sistem mitigasi, terutama jika tujuan sistem adalah penyampaian informasi risiko yang sederhana dan mudah dipahami, sehingga pemilihan variabel difokuskan pada faktor-faktor utama yang memiliki pengaruh signifikan terhadap dampak guncangan (Mase, 2020). Oleh karena itu, variabel yang dipilih umumnya merupakan variabel yang memiliki pengaruh signifikan terhadap dampak guncangan dan dapat diperoleh atau diperkirakan secara realistis.
+Dalam penelitian ini, variabel penentu dampak guncangan gempa dipahami sebagai dasar konseptual dalam penyusunan sistem prediksi probabilitas dampak. Variabel-variabel tersebut digunakan untuk memberikan gambaran risiko yang relevan dengan kondisi lingkungan dan bangunan pengguna, tanpa menuntut pengguna untuk memahami aspek teknis yang kompleks. Pendekatan ini diharapkan dapat mendukung tujuan mitigasi gempa, yaitu meningkatkan pemahaman dan kesiapsiagaan masyarakat di kawasan rawan gempa.
+Variabel penentu dampak guncangan gempa merupakan faktor-faktor yang memengaruhi tingkat dampak yang dirasakan pada suatu wilayah ketika gempa terjadi. Variabel-variabel ini tidak berdiri sendiri, melainkan saling berinteraksi dalam menentukan besarnya risiko dan potensi kerusakan. Dalam penelitian ini, variabel yang digunakan dipilih berdasarkan relevansinya terhadap mitigasi gempa, ketersediaan data, serta kemudahan interpretasi dalam sistem mitigasi berbasis aplikasi. Ringkasan variabel penentu dampak guncangan gempa disajikan pada Tabel II.4.
+Tabel II.4 Variabel penentu dampak guncangan gempa
+No
+Variabel
+Deskripsi Singkat
+Peran terhadap Dampak
+
+1
+Magnitudo Gempa
+Ukuran energi gempa yang dilepaskan pada sumber kejadian
+Semakin besar magnitudo, semakin besar potensi guncangan dan kerusakan
+
+2
+Kedalaman Gempa
+Jarak sumber gempa dari permukaan bumi
+Gempa dangkal cenderung menghasilkan guncangan lebih kuat
+
+3
+Jarak ke Episentrum
+Jarak lokasi pengguna terhadap pusat gempa
+Lokasi yang lebih dekat berpotensi mengalami guncangan lebih besar
+
+4
+Intensitas Guncangan (estimasi)
+Tingkat guncangan yang dirasakan di suatu lokasi
+Berkaitan langsung dengan tingkat kerusakan dan pengalaman manusia
+
+5
+Kondisi Tanah (umum)
+Karakteristik tanah permukaan (lunak/keras)
+Tanah lunak dapat memperkuat guncangan
+
+6
+Kepadatan Bangunan
+Tingkat kepadatan bangunan di suatu wilayah
+Meningkatkan potensi kerusakan fisik dan dampak sosial
+
+7
+Kerentanan Bangunan (umum)
+Tingkat ketahanan bangunan terhadap gempa
+Bangunan rentan lebih mudah mengalami kerusakan
+
+Machine Learning dalam Prediksi Dampak Gempa
+Perkembangan machine learning telah membuka peluang baru dalam pengolahan data kebencanaan, khususnya dalam analisis dan prediksi risiko bencana alam. Machine learning memungkinkan sistem untuk mempelajari pola dan hubungan nonlinier dari data seismik dan data terkait, sehingga dapat menghasilkan estimasi atau klasifikasi berbasis data yang mendukung analisis kebencanaan (Mousavi & Beroza, 2025). Dalam konteks mitigasi gempa, machine learning dimanfaatkan sebagai alat bantu analitik untuk memperkirakan potensi dampak dan tingkat risiko berdasarkan kombinasi parameter guncangan dan karakteristik bangunan maupun wilayah (Jena dkk., 2020).
+Pemanfaatan machine learning dalam mitigasi gempa tidak bertujuan untuk memprediksi kejadian gempa secara pasti, melainkan untuk mendukung analisis risiko dan penyajian informasi yang lebih terukur. Hasil yang dihasilkan oleh model machine learning bersifat estimatif dan probabilistik, sehingga berfungsi sebagai dukungan dalam pengambilan keputusan mitigasi, bukan sebagai kepastian absolut mengenai dampak yang akan terjadi (Mangalathu dkk., 2020). Pendekatan ini sejalan dengan tujuan mitigasi gempa yang berfokus pada pengurangan risiko dan peningkatan kesiapsiagaan.
+Dalam penelitian ini, machine learning diposisikan sebagai komponen pendukung dalam sistem mitigasi gempa berbasis Android. Penggunaan machine learning diarahkan untuk membantu menyederhanakan analisis risiko dan menyajikan estimasi probabilitas dampak guncangan dalam bentuk klasifikasi atau kategori yang lebih mudah dipahami oleh pengguna non-teknis (Zhang dkk., 2018). Oleh karena itu, pembahasan mengenai machine learning difokuskan pada konsep dasar dan pendekatan yang relevan dengan tujuan sistem, tanpa membahas aspek teknis yang terlalu kompleks.
+Machine Learning
+Machine learning merupakan pendekatan komputasional yang memungkinkan sistem mempelajari pola dan hubungan kompleks dari data untuk menghasilkan kemampuan prediktif tanpa pemrograman eksplisit, dan telah banyak diterapkan dalam bidang seismologi modern (Mousavi & Beroza, 2025). Melalui proses pembelajaran ini, sistem dapat mengenali pola, hubungan, dan kecenderungan dalam data yang digunakan sebagai dasar untuk melakukan prediksi atau klasifikasi.
+Konsep dasar machine learning bertumpu pada pemanfaatan data sebagai sumber pengetahuan. Dalam pendekatan supervised learning, data historis digunakan untuk melatih model agar mampu memetakan hubungan antara variabel masukan dan keluaran sehingga model dapat melakukan generalisasi pada data baru (Mousavi & Beroza, 2025). Setelah proses pelatihan, model diharapkan dapat memberikan estimasi atau keputusan ketika dihadapkan pada data baru. Proses ini menjadikan machine learning sebagai pendekatan yang adaptif terhadap variasi data dan kondisi yang berbeda.
+/
+Gambar  II2 Alur Proses Model Machine Learning
+Dalam konteks gempa bumi, machine learning telah digunakan untuk memprediksi tingkat kerusakan bangunan dan kondisi keselamatan struktural pascagempa dengan memanfaatkan parameter gempa dan karakteristik bangunan (Zhang dkk., 2018). Hubungan antara parameter gempa, kondisi lingkungan, dan tingkat dampak bersifat nonlinier serta melibatkan banyak variabel, sehingga lebih efektif dimodelkan menggunakan pendekatan machine learning (Jena dkk., 2020). Machine learning memungkinkan pengolahan hubungan kompleks tersebut menjadi model yang dapat digunakan untuk memperkirakan risiko secara lebih sistematis.
+Namun, penggunaan machine learning juga memiliki keterbatasan yang perlu dipahami. Kinerja model machine learning sangat dipengaruhi oleh kualitas dan representativitas data pelatihan, sehingga keterbatasan data dapat berdampak pada akurasi hasil prediksi (Mousavi & Beroza, 2025). Data yang tidak lengkap, tidak seimbang, atau tidak mencerminkan kondisi nyata dapat menghasilkan model yang kurang akurat. Oleh karena itu, hasil prediksi machine learning perlu diinterpretasikan secara hati-hati, terutama dalam konteks mitigasi bencana yang melibatkan keselamatan manusia.
+Dalam penelitian ini, konsep machine learning dipahami sebagai pendekatan analitik yang mendukung sistem mitigasi gempa, bukan sebagai tujuan utama penelitian. Pembahasan mengenai machine learning difokuskan pada pemahaman konseptual yang diperlukan untuk menjelaskan bagaimana model prediksi probabilitas dampak guncangan dapat bekerja dan diintegrasikan ke dalam aplikasi mitigasi gempa berbasis Android.
+Supervised Learning
+Supervised learning merupakan pendekatan dalam machine learning yang membangun model prediksi dengan mempelajari hubungan antara data masukan dan label keluaran yang telah diketahui, dan banyak digunakan dalam berbagai aplikasi seismologi (Mousavi & Beroza, 2025). Dalam pendekatan ini, model dilatih menggunakan pasangan data masukan dan keluaran, sehingga sistem dapat mempelajari hubungan antara variabel-variabel yang digunakan dengan hasil yang diharapkan. Setelah proses pelatihan, model dapat digunakan untuk memprediksi keluaran dari data baru yang belum pernah dilihat sebelumnya.
+Pendekatan supervised learning telah digunakan secara luas untuk memprediksi tingkat kerusakan dan risiko pascagempa dengan memetakan hubungan antara parameter gempa, karakteristik bangunan, dan tingkat dampak yang dihasilkan (Mangalathu dkk., 2020). Dalam mitigasi gempa, data historis yang memuat informasi karakteristik gempa dan dampaknya dapat dimanfaatkan sebagai data pelatihan. Melalui proses pembelajaran ini, model dapat mengenali pola-pola tertentu yang berkaitan dengan tingkat risiko atau dampak guncangan gempa.
+Dalam mitigasi gempa, penggunaan model supervised learning berbasis algoritma yang relatif sederhana dan transparan memungkinkan hasil prediksi lebih mudah diinterpretasikan, khususnya untuk mendukung pengambilan keputusan pascagempa (Zhang dkk., 2018). Model yang dapat dijelaskan dengan baik memiliki nilai penting dalam sistem mitigasi, karena hasil prediksi perlu dipahami dan dipercaya oleh pengguna. Model yang terlalu kompleks dan sulit dijelaskan berpotensi menurunkan tingkat kepercayaan terhadap sistem, terutama bagi masyarakat awam.
+Dalam sistem mitigasi gempa berbasis aplikasi, supervised learning digunakan untuk mendukung prediksi probabilitas dampak guncangan gempa berdasarkan variabel-variabel yang relevan. Variabel tersebut dapat mencakup karakteristik gempa, kondisi lingkungan, serta informasi terkait bangunan. Model supervised learning memanfaatkan variabel-variabel tersebut untuk memperkirakan tingkat risiko dalam bentuk probabilitas atau kategori dampak.
+Namun demikian, penerapan supervised learning dalam mitigasi gempa perlu mempertimbangkan keterbatasan data dan konteks penggunaan sistem. Kinerja model supervised learning sangat dipengaruhi oleh keterbatasan jumlah dan kualitas data kebencanaan, sehingga hasil prediksi perlu ditafsirkan secara hati-hati dalam konteks mitigasi gempa (Mousavi & Beroza, 2025). Selain itu, hasil prediksi perlu disajikan secara hati-hati agar tidak menimbulkan kesan kepastian yang berlebihan.
+Dalam penelitian ini, supervised learning diposisikan sebagai pendekatan yang mendukung analisis risiko secara sederhana dan terukur. Pendekatan ini digunakan untuk menjelaskan bagaimana sistem prediksi probabilitas dampak guncangan gempa dapat dibangun dan diintegrasikan ke dalam aplikasi mitigasi gempa, tanpa mengabaikan aspek interpretabilitas dan kemudahan pemahaman bagi pengguna.
+Model Klasifikasi Berbasis Probabilistik
+Model klasifikasi berbasis probabilistik dalam supervised learning menghasilkan keluaran berupa estimasi probabilitas keanggotaan suatu kelas, sehingga mampu merepresentasikan ketidakpastian yang melekat pada fenomena seismik (Mousavi & Beroza, 2025). Alih-alih memberikan keputusan biner secara mutlak, model ini memberikan estimasi peluang suatu kondisi atau dampak terjadi. Pendekatan probabilistik ini sangat relevan dalam konteks mitigasi bencana, di mana ketidakpastian merupakan bagian yang tidak terpisahkan dari fenomena alam.
+Dalam mitigasi gempa, model klasifikasi probabilistik telah digunakan untuk memperkirakan kemungkinan terjadinya dampak, termasuk tingkat kerusakan bangunan dan kondisi keselamatan struktural pascagempa (Zhang dkk., 2018). Hasil prediksi berupa probabilitas memungkinkan sistem untuk menyampaikan informasi risiko secara lebih fleksibel dan realistis. Pengguna dapat memahami bahwa risiko berada pada rentang tertentu, bukan sebagai kepastian yang tidak dapat diubah.
+Model klasifikasi berbasis probabilistik mendukung komunikasi risiko dengan menyajikan hasil prediksi dalam bentuk probabilitas yang lebih informatif untuk mendukung pengambilan keputusan pascagempa (Mousavi & Beroza, 2025). Informasi probabilitas dapat dikonversi menjadi kategori risiko atau visualisasi sederhana yang mudah dipahami oleh masyarakat. Dengan pendekatan ini, sistem mitigasi gempa dapat menyampaikan informasi yang lebih informatif tanpa menimbulkan kesan menakutkan atau menyesatkan.
+Selain itu, model probabilistik relatif lebih mudah diintegrasikan ke dalam sistem informasi dibandingkan model yang sangat kompleks. Model ini memungkinkan pengembang sistem untuk menjelaskan bagaimana hasil prediksi diperoleh dan faktor-faktor apa saja yang memengaruhi hasil tersebut. Aspek ini penting dalam konteks sistem mitigasi yang berorientasi pada kepercayaan dan pemahaman pengguna.
+Meskipun demikian, model klasifikasi probabilistik juga memiliki keterbatasan. Estimasi probabilitas yang dihasilkan oleh model sangat bergantung pada kualitas data dan asumsi pemodelan, sehingga hasil prediksi perlu diinterpretasikan secara hati-hati dalam konteks mitigasi gempa (Mousavi & Beroza, 2025). Oleh karena itu, hasil prediksi perlu dipahami sebagai estimasi yang memiliki batasan tertentu. Penyampaian hasil prediksi perlu disertai dengan penjelasan mengenai keterbatasan model agar pengguna tidak salah menafsirkan informasi yang diberikan.
+Dalam penelitian ini, model klasifikasi berbasis probabilistik dipilih sebagai pendekatan yang sesuai dengan tujuan sistem mitigasi gempa berbasis Android. Model ini digunakan untuk mendukung penyajian prediksi probabilitas dampak guncangan gempa secara sederhana, informatif, dan mudah dipahami oleh masyarakat. Pendekatan ini menjadi jembatan konseptual menuju pembahasan model Logistic Rlegression yang dibahas secara lebih spesifik pada bagian selanjutnya.
+Logistic Regression
+Logistic Regression merupakan metode klasifikasi dalam supervised learning yang memodelkan hubungan antara variabel penentu dan peluang terjadinya suatu kejadian, sehingga menghasilkan keluaran berupa probabilitas yang dapat digunakan untuk analisis risiko (Budimir dkk., 2015). Metode ini banyak dimanfaatkan dalam berbagai bidang, termasuk kesehatan, ekonomi, dan kebencanaan, karena kemampuannya dalam menghasilkan keluaran berupa probabilitas yang mudah diinterpretasikan. Hubungan nonlinier antara variabel masukan dan probabilitas keluaran pada Logistic Regression umumnya direpresentasikan melalui fungsi sigmoid, sebagaimana ditunjukkan pada Gambar II.3
+.
+/
+Gambar  II3 Kurva sigmoid pada metode Logistic Regression.
+Dalam konteks mitigasi bencana, Logistic Regression digunakan untuk memperkirakan probabilitas terjadinya dampak berdasarkan kombinasi variabel penentu, sehingga mendukung penilaian risiko secara kuantitatif dan terukur (Budimir dkk., 2015). Pendekatan ini sejalan dengan kebutuhan sistem mitigasi gempa yang menekankan pada penyampaian informasi risiko secara probabilistik, bukan deterministik. Dengan demikian, Logistic Regression dapat berperan sebagai alat analitik yang mendukung penyajian informasi risiko yang lebih terukur dan informatif.
+Konsep Dasar Logistic Regression
+Logistic Regression merupakan metode statistik yang memodelkan hubungan antara variabel independen dan kejadian kategorikal dengan menghasilkan estimasi probabilitas terjadinya suatu peristiwa (Budimir dkk., 2015). Berbeda dengan regresi linier yang menghasilkan keluaran berupa nilai kontinu, Model Logistic Regression menghasilkan keluaran berupa probabilitas kejadian yang selanjutnya dapat digunakan untuk penentuan kelas berdasarkan ambang batas tertentu dalam analisis risiko (Li & Jimenez, 2018). Probabilitas ini kemudian dapat digunakan untuk menentukan klasifikasi berdasarkan ambang batas yang ditetapkan.
+Konsep dasar Logistic Regression berangkat dari kebutuhan untuk memodelkan kejadian yang bersifat biner atau kategorikal, seperti terjadinya atau tidak terjadinya suatu dampak. Dalam konteks prediksi dampak gempa, variabel dependen dapat merepresentasikan kategori dampak tertentu, misalnya tingkat risiko rendah atau tinggi. Variabel independen yang digunakan merupakan faktor-faktor yang memengaruhi terjadinya dampak tersebut, seperti karakteristik gempa dan kondisi lingkungan.
+Logistic Regression bekerja dengan mengestimasi hubungan antara variabel independen dan probabilitas terjadinya suatu kejadian melalui fungsi matematis tertentu. Hubungan ini memungkinkan model untuk menghitung peluang suatu kondisi terjadi berdasarkan kombinasi nilai variabel masukan. Dengan pendekatan ini, model tidak hanya memberikan hasil klasifikasi, tetapi juga memberikan informasi mengenai tingkat keyakinan atau peluang dari hasil tersebut.
+Salah satu keunggulan utama Logistic Regression adalah kemampuannya dalam menghasilkan model yang relatif mudah dipahami. Setiap variabel independen dalam Logistic Regression memiliki koefisien yang merepresentasikan pengaruhnya terhadap probabilitas kejadian, sehingga kontribusi masing-masing variabel dapat dianalisis secara interpretatif (Budimir dkk., 2015). Hal ini menjadi nilai tambah dalam sistem mitigasi gempa, karena hasil prediksi perlu dijelaskan dan dikomunikasikan kepada pengguna yang tidak memiliki latar belakang teknis.
+Dalam penelitian ini, konsep dasar Logistic Regression digunakan sebagai landasan dalam pengembangan model prediksi probabilitas dampak guncangan gempa. Pembahasan difokuskan pada pemahaman konseptual mengenai cara kerja model dan relevansinya dalam konteks mitigasi gempa, tanpa masuk ke pembahasan matematis yang terlalu mendalam. Pendekatan ini diambil agar model dapat dijelaskan dan diintegrasikan ke dalam sistem mitigasi gempa berbasis Android secara efektif.
+Fungsi Sigmoid dan Interpretasi Probabilitas
+Dalam Logistic Regression, fungsi sigmoid digunakan untuk mengubah hasil perhitungan model menjadi nilai probabilitas. Fungsi ini memetakan nilai keluaran model ke dalam rentang antara 0 dan 1, sehingga hasil prediksi dapat diinterpretasikan sebagai peluang terjadinya suatu kejadian. Pendekatan ini menjadikan Logistic Regression sesuai untuk permasalahan prediksi risiko yang bersifat probabilistik, seperti prediksi dampak guncangan gempa.
+P𝑦=1 | 𝑥= 11+𝑒−𝑧
+Dimana z,
+𝑧= 𝛽0 + 𝛽1𝑥1+ 𝛽2𝑥2+…+ 𝛽𝑛𝑥𝑛
+Nilai probabilitas yang dihasilkan oleh fungsi sigmoid merepresentasikan tingkat kemungkinan suatu kelas atau kondisi terjadi. Dalam konteks mitigasi gempa, probabilitas tersebut dapat diartikan sebagai peluang terjadinya dampak tertentu akibat guncangan gempa. Pendekatan probabilistik ini memungkinkan sistem untuk menyampaikan informasi risiko secara lebih realistis, mengingat ketidakpastian merupakan karakteristik alami dari fenomena gempa bumi.
+Interpretasi probabilitas dalam Logistic Regression menjadi aspek penting dalam komunikasi risiko kepada masyarakat. Nilai probabilitas yang disajikan perlu dipahami sebagai estimasi berbasis data dan asumsi tertentu, bukan sebagai kepastian. Oleh karena itu, hasil prediksi perlu disertai dengan penjelasan yang mudah dipahami agar pengguna tidak salah menafsirkan makna probabilitas yang diberikan oleh sistem.
+Dalam sistem mitigasi gempa berbasis aplikasi, hasil probabilitas dapat dikonversi menjadi kategori risiko atau visualisasi sederhana. Pendekatan ini bertujuan untuk membantu pengguna memahami tingkat risiko tanpa harus memahami konsep matematis di balik model. Dengan demikian, fungsi sigmoid tidak hanya berperan dalam proses perhitungan model, tetapi juga menjadi dasar dalam penyajian informasi risiko yang informatif dan mudah dipahami.
+Logistic Regression dalam Prediksi Risiko Bencana
+Logistic Regression telah banyak digunakan dalam berbagai studi kebencanaan untuk memodelkan dan memetakan probabilitas risiko berdasarkan variabel-variabel penentu yang relevan (Budimir dkk., 2015). Metode ini digunakan untuk memodelkan kemungkinan terjadinya suatu dampak berdasarkan kombinasi variabel-variabel penentu yang relevan. Dalam konteks kebencanaan geologi, Logistic Regression digunakan untuk mengestimasi probabilitas dampak berdasarkan kombinasi karakteristik kejadian, kondisi lingkungan, dan faktor kerentanan (Li & Jimenez, 2018).
+Penggunaan Logistic Regression dalam prediksi risiko bencana memiliki beberapa keunggulan. Model ini relatif sederhana dan transparan, sehingga hasil prediksi dapat dijelaskan secara konseptual. Hal ini menjadi penting dalam konteks mitigasi bencana, di mana hasil analisis perlu dikomunikasikan kepada berbagai pihak, termasuk masyarakat awam dan pengambil kebijakan.
+Selain itu, Logistic Regression mampu mengakomodasi sejumlah besar variabel penentu risiko dalam satu model, termasuk pada kondisi data berdimensi tinggi, dengan tetap mempertahankan efisiensi dan interpretabilitas (Abramovich & Grinshtein, 2019). Variabel-variabel tersebut dapat dianalisis secara bersamaan untuk melihat kontribusinya terhadap kemungkinan terjadinya dampak. Dengan pendekatan ini, sistem mitigasi gempa dapat memberikan gambaran risiko yang lebih komprehensif dibandingkan pendekatan yang hanya mengandalkan satu parameter tertentu.
+Dalam penelitian ini, Logistic Regression digunakan sebagai model pendukung untuk memprediksi probabilitas dampak guncangan gempa. Model ini tidak digunakan untuk meramalkan kejadian gempa, melainkan untuk mengestimasi tingkat risiko berdasarkan data dan variabel yang tersedia. Hasil prediksi digunakan sebagai bahan informasi dalam sistem mitigasi gempa berbasis Android, sehingga pengguna dapat memahami kondisi risiko secara lebih personal dan kontekstual.
+Kelebihan dan Kekurangan
+Sebagai metode prediksi, Logistic Regression memiliki sejumlah kelebihan yang menjadikannya sesuai untuk digunakan dalam sistem mitigasi gempa berbasis aplikasi. Salah satu kelebihan utama adalah tingkat interpretabilitas yang tinggi. Model ini memungkinkan pengembang sistem untuk menjelaskan bagaimana variabel-variabel tertentu memengaruhi hasil prediksi, sehingga hasil analisis dapat dikomunikasikan dengan lebih jelas kepada pengguna.
+Kelebihan lainnya adalah kesederhanaan model dan efisiensi dalam pengolahan data. Logistic Regression dapat bekerja dengan baik pada dataset yang relatif terbatas dan tidak memerlukan komputasi yang kompleks. Hal ini menjadi nilai tambah dalam pengembangan aplikasi mitigasi gempa yang ditujukan untuk penggunaan praktis dan berkelanjutan.
+Namun demikian, Logistic Regression juga memiliki keterbatasan yang perlu diperhatikan. Model ini mengasumsikan hubungan tertentu antara variabel independen dan probabilitas keluaran, sehingga mungkin kurang mampu menangkap hubungan yang sangat kompleks atau nonlinier. Hasil prediksi Logistic Regression sangat dipengaruhi oleh kualitas dan representativitas data pelatihan serta asumsi model, sehingga perlu diposisikan sebagai alat bantu analitik dalam penilaian risiko (Budimir dkk., 2015).
+Dalam konteks mitigasi gempa, keterbatasan tersebut menunjukkan bahwa Logistic Regression perlu diposisikan sebagai alat bantu analitik, bukan sebagai satu-satunya dasar pengambilan keputusan. Hasil prediksi perlu dilengkapi dengan informasi mitigasi, panduan kesiapsiagaan, dan pemahaman konteks lokal agar dapat dimanfaatkan secara optimal oleh masyarakat.
+Dalam penelitian ini, pemilihan Logistic Regression didasarkan pada keseimbangan antara kebutuhan akan prediksi probabilitas yang informatif dan keterbatasan sistem mitigasi gempa berbasis aplikasi. Dengan memahami kelebihan dan keterbatasan model, sistem yang dikembangkan diharapkan dapat menyajikan informasi risiko secara bertanggung jawab dan mendukung peningkatan kesiapsiagaan masyarakat di kawasan rawan gempa.
+Tabel II.5 Kelebihan dan Kekurangan Logistic Regression
+Aspek
+Kelebihan Logistic Regression
+Keterbatasan Logistic Regression
+
+Interpretabilitas
+Model mudah dipahami karena hubungan antara variabel input dan probabilitas keluaran dapat dijelaskan secara jelas
+Kurang efektif untuk menangkap hubungan yang sangat kompleks atau non-linear
+
+Keluaran Model
+Menghasilkan nilai probabilitas yang sesuai untuk analisis risiko dan mitigasi bencana
+Memerlukan penentuan ambang batas (threshold) untuk klasifikasi yang dapat memengaruhi hasil
+
+Kebutuhan Data
+Dapat bekerja dengan jumlah data yang relatif terbatas
+Sensitif terhadap data yang tidak seimbang (imbalanced data)
+
+Kompleksitas Model
+Relatif sederhana dan efisien secara komputasi
+Tidak sefleksibel model machine learning yang lebih kompleks
+
+Stabilitas Model
+Cenderung stabil dan tidak mudah mengalami overfitting
+Performa dapat menurun jika terdapat multikolinearitas antar variabel
+
+Relevansi terhadap Penelitian
+Cocok untuk sistem prediksi berbasis probabilitas yang mendukung pengambilan keputusan mitigasi
+Memerlukan validasi tambahan untuk memastikan akurasi prediksi pada berbagai kondisi wilayah
+
+Evaluasi Model Prediksi
+Evaluasi model prediksi merupakan tahap penting dalam memastikan bahwa model yang digunakan dapat menghasilkan keluaran yang relevan dan dapat dipercaya. Dalam konteks mitigasi gempa, evaluasi model tidak hanya bertujuan untuk menilai performa teknis model, tetapi juga untuk memastikan bahwa hasil prediksi dapat digunakan sebagai informasi pendukung dalam meningkatkan pemahaman dan kesiapsiagaan masyarakat.
+Berbeda dengan penelitian machine learning murni yang berfokus pada optimasi performa model, evaluasi dalam penelitian ini diposisikan sebagai upaya untuk menilai kelayakan model prediksi sebagai komponen pendukung sistem mitigasi gempa berbasis aplikasi. Oleh karena itu, evaluasi dilakukan dengan pendekatan yang sederhana dan mudah dijelaskan, agar hasilnya dapat dipahami dalam konteks sistem informasi dan mitigasi bencana.
+Confusion Matrix
+Confusion matrix merupakan alat evaluasi yang digunakan untuk menggambarkan kinerja model klasifikasi dengan membandingkan hasil prediksi model terhadap kondisi aktual. Confusion matrix menyajikan informasi mengenai jumlah prediksi yang benar dan salah untuk setiap kelas, sehingga memberikan gambaran awal mengenai kemampuan model dalam melakukan klasifikasi. Untuk memperjelas konsep evaluasi klasifikasi, contoh struktur confusion matrix biner disajikan pada Gambar X. Confusion matrix ini menunjukkan hubungan antara hasil prediksi model dan kondisi aktual, yang menjadi dasar dalam memahami jenis kesalahan klasifikasi yang mungkin terjadi sebelum dilakukan perhitungan metrik evaluasi.
+Tabel II.6 Confusion Matrix
+
+Actually Positive (1)
+Actually Negative (0)
+
+Predicted Positive (1)
+True Positives (TPs)
+False Positives (FPs)
+
+Predicted Negative (0)
+False Negatives (FNs)
+True Negatives (TNs)
+
+Dalam konteks prediksi dampak gempa, confusion matrix dapat digunakan untuk melihat sejauh mana model mampu mengklasifikasikan tingkat dampak atau risiko dengan benar. Informasi ini membantu peneliti memahami pola kesalahan prediksi yang mungkin terjadi, seperti kecenderungan model dalam mengklasifikasikan risiko terlalu rendah atau terlalu tinggi.
+Penggunaan confusion matrix dalam penelitian ini bertujuan untuk memberikan gambaran sederhana mengenai performa model prediksi. Hasil evaluasi ini digunakan sebagai bahan pertimbangan dalam menilai kelayakan model sebagai pendukung sistem mitigasi, bukan sebagai dasar untuk melakukan optimasi model secara mendalam.
+Accuracy, Precision, Recall, dan AUC
+Sebelum menghitung metrik performa, perlu dipahami empat komponen dasar dari confusion matrix yang digunakan untuk mengevaluasi hasil prediksi model:
+True Positive (TP)
+Data guncangan gempa yang diprediksi benar oleh model sebagai kategori risiko tersebut.
+False Positive (FP)
+Data yang bukan termasuk kategori risiko tertentu dan diprediksi benar oleh model sebagai bukan kategori tersebut.
+False Negative (FN)
+Data yang sebenarnya bukan kategori risiko tertentu, namun salah diprediksi oleh model sebagai kategori tersebut (Type I Error).
+True Negative (TN)
+Data yang sebenarnya masuk dalam kategori risiko tertentu, namun salah diprediksi oleh model sebagai bukan kategori tersebut (Type II Error).
+Selain confusion matrix, performa model prediksi dapat dievaluasi menggunakan beberapa metrik evaluasi, seperti accuracy, precision, recall, dan area under curve (AUC). Metrik-metrik ini digunakan untuk memberikan gambaran kuantitatif mengenai kemampuan model dalam melakukan prediksi.
+Accuracy
+Accuracy menggambarkan proporsi prediksi yang benar (baik positif maupun negatif) dibandingkan dengan seluruh data yang diuji. Secara matematis, akurasi dihitung dengan rumus:
+Accuracy = 𝑇𝑃+𝑇𝑁𝑇𝑃+𝑇𝑁+𝐹𝑃+𝐹𝑁
+Precision
+Mengukur ketepatan model dalam mengidentifikasi wilayah yang benar-benar mengalami guncangan tinggi di antara semua wilayah yang diprediksi akan mengalami guncangan tinggi:
+Precision = 𝑇𝑃𝑇𝑃+ 𝐹𝑃
+Recall
+Sangat krusial dalam mitigasi bencana untuk mengukur seberapa banyak kejadian gempa signifikan yang berhasil dideteksi oleh model tanpa ada yang terlewat (False Negative):
+Recall = 𝑇𝑃𝑇𝑃+ 𝐹𝑃
+Area Under Curve
+AUC digunakan untuk menggambarkan kemampuan model dalam membedakan antara kelas risiko yang berbeda secara keseluruhan. Nilai AUC memberikan indikasi seberapa baik model memisahkan kategori (misalnya seperti area terdampak dengan tidak terdampak) tanpa bergantung pada satu nilai ambang batas (threshold).
+Dalam penelitian ini, penggunaan metrik evaluasi tersebut dibatasi untuk memberikan gambaran umum mengenai performa model prediksi. Penggunaan metrik ini tidak ditujukan untuk melakukan perbandingan antar model atau optimasi parameter yang mendalam, melainkan untuk memastikan bahwa model yang dikembangkan memiliki performa yang wajar dan valid dalam mendukung tujuan sistem mitigasi gempa.
+Interpretasi Hasil Prediksi untuk Mitigasi
+Interpretasi hasil prediksi merupakan aspek penting dalam evaluasi model prediksi, terutama dalam konteks mitigasi gempa. Hasil prediksi yang baik secara teknis belum tentu bermanfaat apabila tidak dapat dipahami atau digunakan oleh masyarakat. Oleh karena itu, evaluasi model perlu memperhatikan bagaimana hasil prediksi dapat diterjemahkan menjadi informasi mitigasi yang relevan dan mudah dipahami.
+Dalam sistem mitigasi gempa berbasis aplikasi, hasil prediksi probabilitas dampak perlu disajikan dalam bentuk yang sederhana dan kontekstual. Interpretasi hasil prediksi difokuskan pada bagaimana informasi tersebut dapat membantu pengguna memahami tingkat risiko dan mengambil langkah kesiapsiagaan yang sesuai.
+Dalam penelitian ini, evaluasi model prediksi dipandang sebagai bagian dari upaya memastikan bahwa sistem mitigasi gempa dapat menyajikan informasi risiko secara bertanggung jawab. Hasil evaluasi digunakan untuk menilai apakah model prediksi telah sesuai dengan tujuan sistem, yaitu mendukung peningkatan pemahaman dan kesiapsiagaan masyarakat, bukan sebagai alat prediksi yang bersifat mutlak.
+State of Art
+State of the Art digunakan untuk memetakan posisi penelitian ini terhadap penelitian-penelitian sebelumnya yang relevan. Analisis ini bertujuan untuk menunjukkan perbedaan fokus, pendekatan, dan kontribusi penelitian yang dilakukan, sehingga dapat memperjelas celah penelitian (research gap) yang ingin diisi.
+Tabel II.7 State of Art
+No
+Author
+Metode
+Fokus Penelitian
+Kekuatan
+Kekurangan
+Kolom Pembanding
+
+1
+(Asim dkk., 2017)
+Pattern Recognition Neural Network (PRNN), Recurrent Neural Network (RNN), Random Forest, LPBoost Ensemble
+Prediksi kejadian gempa bumi bermagnitudo ≥ 5,5 pada wilayah Hindukush berbasis machine learning menggunakan delapan indikator seismik yang dihitung dari katalog gempa historis
+Menggunakan indikator seismik berbasis prinsip geofisika (Gutenberg–Richter, seismic quiescence), membandingkan beberapa algoritma machine learning, serta menunjukkan performa prediksi yang cukup baik untuk skala waktu bulanan
+Prediksi diformulasikan sebagai klasifikasi biner kejadian gempa tanpa mempertimbangkan lokasi spasial dan dampak kerusakan, serta masih menghasilkan tingkat false alarm yang relatif tinggi
+Jenis keluaran model (kejadian gempa / tidak), horizon waktu prediksi, ketergantungan pada katalog historis, dan relevansi terhadap mitigasi berbasis dampak
+
+2
+(Zhang dkk., 2018)
+Classification and Regression Tree (CART) dan Random Forest
+Pengembangan kerangka kerja machine learning untuk menilai keselamatan struktural bangunan pascagempa (aman atau tidak aman dihuni) berdasarkan pola respons struktur dan pola kerusakan yang dikaitkan dengan kapasitas runtuh residual
+Mengintegrasikan analisis seismik berbasis fisika dengan machine learning, menggunakan data simulasi yang kaya (response dan damage patterns), serta menghasilkan prediksi keselamatan struktural dengan akurasi tinggi (>90%)
+Memerlukan analisis nonlinier dan simulasi dinamis yang kompleks serta berfokus pada satu tipe bangunan studi kasus, sehingga implementasi cepat di lapangan masih terbatas
+Jenis keluaran model (klasifikasi biner aman/tidak aman), ketergantungan pada simulasi struktural detail, kebutuhan data pascagempa, dan potensi integrasi sistem real-time
+
+3
+(Mangalathu dkk., 2020)
+Discriminant Analysis, K-Nearest Neighbors, Decision Tree, Random Forest
+Pengembangan model machine learning untuk mengklasifikasikan tingkat kerusakan bangunan akibat gempa bumi berdasarkan tag ATC-20 (green, yellow, red) menggunakan data gempa Napa 2014
+Menggunakan data bangunan nyata pasca gempa, membandingkan beberapa algoritma secara sistematis, serta menunjukkan bahwa Random Forest memiliki performa terbaik untuk klasifikasi kerusakan bangunan
+Terbatas pada satu kejadian gempa dan bangunan hunian bertingkat rendah, serta menghasilkan keluaran berupa klasifikasi kategori kerusakan, bukan probabilitas dampak
+Jenis keluaran model (klasifikasi kategorikal), skala bangunan, ketergantungan pada data pasca kejadian, dan tingkat generalisasi model
+
+4
+(Jena dkk., 2020)
+Hierarchical Clustering (HCA), Silhouette Clustering (SC), Convolutional Neural Network (CNN), Analytical Hierarchy Process (AHP), GIS
+Penilaian bahaya dan risiko gempa bumi di Kota Palu dengan mengintegrasikan estimasi probabilitas kejadian gempa, bahaya seismik, amplifikasi seismik, dan kerentanan menggunakan pendekatan machine learning dan analisis spasial
+Mengintegrasikan probabilitas, hazard, dan vulnerability dalam satu kerangka risiko, memanfaatkan CNN untuk estimasi probabilitas spasial, serta menghasilkan peta risiko yang aplikatif untuk perencanaan mitigasi dan tata ruang
+Membutuhkan data spasial dan inventori yang kompleks, berfokus pada analisis risiko spasial pascadata historis, serta tidak memodelkan probabilitas dampak guncangan secara langsung pada skala mikro atau per kejadian
+Skala analisis (spasial–kota), jenis keluaran (peta risiko), integrasi GIS, dan ketergantungan pada kualitas data geospasial
+
+5
+(Mousavi & Beroza, 2025)
+Machine Learning dan Deep Learning (CNN, RNN, Transformer, Bayesian NN, PINN, Unsupervised Learning)
+Kajian (review) komprehensif penerapan machine learning dalam seismologi gempa bumi, meliputi deteksi kejadian seismik, klasifikasi gempa, penentuan parameter sumber, estimasi ground motion, serta arah pengembangan riset
+Menyediakan pemetaan state of the art yang luas dan sistematis, mencakup berbagai pendekatan dan tugas seismologi serta mengidentifikasi tantangan dan peluang riset lanjutan
+Tidak mengusulkan metode atau sistem spesifik serta tidak menyajikan evaluasi eksperimental pada satu studi kasus atau wilayah tertentu
+Jenis tugas seismologi, tingkat otomasi sistem, kebutuhan data latih, dan potensi implementasi real-time
+
+6
+(Arinta, 2020)
+Support Vector Machine (SVM), Random Forest (RF), Decision Tree (DT), Naïve Bayes, K-Means, Convolutional Neural Network (CNN), Deep Learning
+(Review) penggunaan big data dan machine learning pada enam fase manajemen bencana: early warning, damage assessment, monitoring & detection, forecasting, post-disaster response, dan long-term risk reduction
+Mengelompokkan metode ML berdasarkan fase manajemen bencana dan jenis data
+Tidak membahas evaluasi performa model dan tidak membandingkan akurasi antar algoritma
+Fase bencana, jenis algoritma ML/DL, dan sumber data
+
+7
+(Chamola dkk., 2021)
+KNN, SVM, Naïve Bayes, Logistic Regression, Decision Tree,Random Forest, Artificial Neural Network (ANN), CNN, LSTM
+Survey metode ML untuk prediksi bencana, evakuasi, analisis media sosial, dan manajemen pascabencana serta pandemi
+Cakupan algoritma luas dan membahas integrasi ML dengan IoT, UAV, dan sensor
+Terlalu umum dan tidak fokus pada satu jenis bencana atau keluaran berbasis dampak
+Jenis algoritma, domain aplikasi, dan integrasi teknologi
+
+8
+(Lu dkk., 2022)
+Random Forest, Gradient Boosting, Neural Network, Reinforcement Learning, Ensemble Learning
+Systematic review aplikasi AI/ML untuk evakuasi darurat, pengambilan keputusan, dan pemrosesan informasi pada bencana dan krisis kesehatan
+Metodologi PRISMA dan analisis keterbatasan implementasi AI/ML
+Fokus lebih ke kesehatan publik dan tidak membahas prediksi fisik dampak bencana
+Area aplikasi AI/ML dan konteks kedaruratan
+
+9
+(Sreelakshmi & Vinod Chandra, 2022)
+SVM, Random Forest, KNN, ANN, CNN, LSTM, Hybrid ML–IoT Models
+(Review) model ML untuk seluruh tahapan manajemen bencana (pra, saat, dan pascabencana)
+Mengaitkan algoritma ML dengan tahapan bencana dan jenis tugas (prediksi, respons, pemulihan)
+Tidak mengevaluasi performa numerik dan tidak membandingkan model secara langsung
+Tahapan bencana dan fungsi algoritma
+
+10
+(Linardos dkk., 2022)
+Logistic Regression, SVM, Random Forest, CNN, RNN, LSTM, Transformer, GAN
+(Review) Review dan analisis perkembangan ML dan DL untuk prediksi bahaya, penilaian risiko, deteksi, dan damage assessment
+Paling komprehensif, membedakan ML vs DL serta tren mutakhir
+Tidak menghasilkan model baru dan tidak fokus pada satu wilayah studi
+Jenis algoritma (ML vs DL), fase bencana, dan tipe data
+
+Berdasarkan pemetaan penelitian terdahulu pada Tabel II.7, dapat dilihat bahwa pemanfaatan machine learning dalam kajian kebencanaan gempa bumi telah berkembang pesat dengan beragam fokus dan pendekatan. Sejumlah penelitian berfokus pada prediksi kejadian gempa atau magnitudo pada skala regional dan temporal tertentu, seperti prediksi kejadian gempa bermagnitudo besar berbasis indikator seismik historis. Penelitian lain menitikberatkan pada klasifikasi kerusakan bangunan atau penilaian keselamatan struktural pascagempa menggunakan model machine learning yang relatif kompleks dan berbasis data pascakejadian atau simulasi struktural. Selain itu, terdapat pula penelitian yang mengintegrasikan machine learning dengan analisis spasial dan GIS untuk menghasilkan peta bahaya dan risiko gempa pada skala wilayah, yang lebih berorientasi pada perencanaan dan pengambilan keputusan tingkat makro.
+Meskipun demikian, hasil kajian tersebut menunjukkan bahwa sebagian besar penelitian sebelumnya masih berfokus pada keluaran berupa klasifikasi kategorikal, prediksi kejadian gempa, atau pemetaan risiko spasial, serta belum secara eksplisit diarahkan pada penyajian prediksi probabilitas dampak guncangan gempa yang bersifat personal dan mudah dipahami oleh masyarakat umum. Di sisi lain, artikel review yang ada berperan sebagai pemetaan perkembangan metode dan tantangan riset, namun tidak memberikan solusi implementatif yang langsung dapat digunakan sebagai media mitigasi berbasis pengguna.
+Berdasarkan kondisi tersebut, penelitian ini memiliki keunikan dan kontribusi tersendiri dengan memfokuskan pada pengembangan sistem mitigasi gempa berbasis aplikasi Android yang mengintegrasikan model Logistic Regression untuk memprediksi probabilitas dampak guncangan gempa pada tingkat pengguna. Berbeda dengan penelitian sebelumnya yang berorientasi pada optimasi performa model atau analisis teknis mendalam, penelitian ini menempatkan model prediksi sebagai komponen pendukung sistem informasi mitigasi non-struktural. Pendekatan probabilistik dipilih untuk menjembatani data gempa yang bersifat teknis dengan kebutuhan informasi masyarakat yang praktis dan kontekstual, sehingga hasil prediksi dapat digunakan sebagai sarana peningkatan pemahaman risiko dan kesiapsiagaan masyarakat di kawasan Sesar Lembang. Dengan demikian, penelitian ini mengisi celah penelitian yang belum banyak dibahas, yaitu integrasi prediksi probabilitas dampak guncangan gempa yang sederhana, interpretable, dan berorientasi pengguna ke dalam sistem mitigasi gempa berbasis aplikasi mobile
+METODE PENYELESAIAN MASALAH
+Metode penyelesaian masalah adalah langkah-langkah yang dirancang untuk menjawab pertanyaan dalam rumusan masalah yang telah ditetapkan sebelumnya. Bab ini akan menguraikan tahapan penelitian secara sistematis dan terstruktur dalam upaya menyelidiki permasalahan yang dibahas.
+Model Konseptual
+Model konseptual dalam penelitian ini berperan sebagai kerangka kerja yang mengintegrasikan landasan pengetahuan, pendekatan metodologis, serta rancangan penelitian dalam pengembangan sistem mitigasi gempa berbasis teknologi. Model konseptual digunakan untuk memperjelas tujuan penelitian, menggambarkan hubungan antar komponen penelitian, serta menjadi panduan dalam pelaksanaan dan evaluasi penelitian secara sistematis. Dengan adanya model konseptual, alur penelitian menjadi lebih terstruktur, sehingga memudahkan proses analisis serta pemahaman terhadap hasil penelitian yang diperoleh.
+/
+Gambar  III1 Model Konseptual
+Model konseptual pada Gambar III-1 dirancang berdasarkan pendekatan penelitian sistem informasi dengan paradigma Design Science Research. Model ini diawali dari konteks lingkungan (environment) yang merepresentasikan kebutuhan masyarakat, khususnya warga lokal di kawasan Sesar Lembang, terhadap informasi mitigasi gempa yang mudah dipahami dan relevan. Kebutuhan tersebut diperoleh melalui wawancara dan observasi sebagai dasar identifikasi business need yang mendorong pengembangan sistem. Teknologi pendukung seperti Python dan Google Colab digunakan sebagai sarana pengolahan dan analisis data dalam proses pengembangan fitur prediksi.
+Pada bagian IS Research, penelitian ini berfokus pada proses develop/build berupa pengembangan fitur prediksi probabilitas dampak guncangan gempa sebagai artefak utama sistem mitigasi gempa berbasis Android. Proses pengembangan dilakukan secara iteratif mealui tahap assess dan refine untuk memastikan bahwa fitur yang dibangun sesuai dengan kebutuhan pengguna dan tujuan mitigasi non-struktural. Evaluasi artefak dilakukan pada tahap justify/evaluate melalui penggunaan confusion matrix untuk menilai kelayakan hasil prediksi model serta evaluasi usability untuk menilai kemudahan penggunaan dan kejelasan penyajian informasi bagi pengguna.
+Knowledge base dalam penelitian ini mencakup machine learning sebagai fondasi konseptual yang mendukung pengembangan model prediksi, serta Design Science Research sebagai metodologi utama penelitian. Integrasi antara kebutuhan lingkungan, proses pengembangan artefak, serta landasan pengetahuan tersebut diharapkan mampu menghasilkan sistem mitigasi gempa yang tidak hanya layak secara teknis, tetapi juga relevan dan bermanfaat bagi masyarakat dalam meningkatkan pemahaman risiko dan kewaspadaan terhadap potensi dampak guncangan gempa di kawasan Sesar Lembang.
+Sistematika Penyelesaian Masalah
+Tahap pertama bertujuan untuk mengidentifikasi permasalahan, kebutuhan pengguna, serta data yang diperlukan dalam pengembangan sistem mitigasi gempa berbasis Android. Pada tahap ini, pengumpulan data dilakukan melalui dua sumber utama, yaitu data primer dan data sekunder.
+Tahap Pengumpulan Data
+Tahap pertama bertujuan untuk mengidentifikasi permasalahan, kebutuhan pengguna, serta data yang diperlukan dalam pengembangan sistem mitigasi gempa berbasis Android. Pada tahap ini, pengumpulan data dilakukan melalui dua sumber utama, yaitu data primer dan data sekunder.
+Data primer diperoleh melalui wawancara dan observasi terhadap masyarakat di kawasan Sesar Lembang untuk memahami tingkat pemanfaatan aplikasi mitigasi gempa, kendala yang dihadapi pengguna, serta kebutuhan informasi mitigasi yang mudah dipahami. Data ini digunakan sebagai dasar dalam perancangan fitur dan penyajian informasi dalam sistem.
+Data sekunder berupa data gempa historis diperoleh dari sumber resmi, seperti BMKG, yang meliputi parameter gempa berupa magnitudo, kedalaman gempa, dan lokasi kejadian. Data tersebut digunakan sebagai masukan dalam pengembangan modul prediksi probabilitas dampak guncangan gempa. Pada tahap ini juga dilakukan proses seleksi dan pembersihan data untuk memastikan kualitas dan konsistensi data yang digunakan.
+Tahap Pengolahan Data
+Tahap kedua berfokus pada pengolahan data dan pengembangan sistem mitigasi gempa berbasis Android. Data gempa yang telah melalui proses pembersihan kemudian diolah untuk mendukung pengembangan modul prediksi probabilitas dampak guncangan gempa.
+Pengolahan data dilakukan dengan memanfaatkan metode machine learning menggunakan model Logistic Regression. Model ini digunakan untuk menghasilkan estimasi probabilitas dampak guncangan gempa berdasarkan parameter gempa yang tersedia. Pemilihan Logistic Regression didasarkan pada kemampuannya dalam menghasilkan keluaran berupa probabilitas yang relatif mudah diinterpretasikan dan sesuai dengan tujuan sistem mitigasi yang berorientasi pada pemahaman pengguna.
+Hasil dari proses pengolahan data kemudian diintegrasikan ke dalam sistem aplikasi Android sebagai fitur pendukung penyajian informasi risiko. Pada tahap ini, fokus utama bukan pada optimasi performa model, melainkan pada bagaimana hasil prediksi dapat disajikan secara sederhana, informatif, dan relevan bagi pengguna sebagai bagian dari sistem mitigasi non-struktural.
+Tahap Evaluasi
+Tahap terakhir adalah evaluasi sistem yang bertujuan untuk menilai kelayakan dan kegunaan sistem mitigasi gempa yang telah dikembangkan. Evaluasi dilakukan dari dua aspek utama, yaitu evaluasi model prediksi dan evaluasi penggunaan sistem oleh pengguna.
+Evaluasi model prediksi dilakukan secara terbatas menggunakan confusion matrix untuk memperoleh gambaran umum mengenai kemampuan model dalam menghasilkan klasifikasi probabilitas dampak guncangan gempa. Evaluasi ini tidak ditujukan untuk membandingkan model atau melakukan optimasi performa, melainkan untuk memastikan bahwa model yang digunakan layak sebagai komponen pendukung sistem mitigasi.
+Selain itu, evaluasi sistem juga dilakukan melalui observasi dan kuesioner usability untuk menilai kemudahan penggunaan, kejelasan penyajian informasi, serta pemahaman pengguna terhadap informasi mitigasi dan hasil prediksi yang disajikan oleh sistem. Hasil evaluasi digunakan sebagai dasar untuk menilai apakah sistem yang dikembangkan telah sesuai dengan tujuan penelitian, yaitu mendukung peningkatan pemahaman dan kesiapsiagaan masyarakat terhadap risiko gempa bumi di kawasan Sesar Lembang.
+Pengumpulan Data
+Pengumpulan data dalam penelitian ini bertujuan untuk mendukung proses perancangan dan pengembangan sistem mitigasi gempa berbasis Android. Data yang digunakan terdiri dari data primer dan data sekunder, yang masing-masing memiliki peran berbeda dalam mendukung penyelesaian masalah penelitian. Selain itu, dilakukan proses pengolahan data untuk memastikan data yang digunakan sesuai dengan kebutuhan sistem dan tujuan mitigasi non-struktural.
+Data Primer
+Data primer diperoleh secara langsung dari masyarakat di kawasan Sesar Lembang sebagai pengguna potensial sistem mitigasi gempa. Pengumpulan data primer dilakukan melalui wawancara, observasi, dan kuesioner usability.
+Wawancara dilakukan untuk menggali pemahaman masyarakat terhadap risiko gempa, pengalaman menggunakan aplikasi mitigasi gempa yang telah ada, serta kebutuhan informasi mitigasi yang dianggap penting dan mudah dipahami. Observasi dilakukan untuk melihat secara langsung bagaimana pengguna berinteraksi dengan aplikasi mitigasi gempa serta kendala yang muncul dalam penggunaan sistem. Kuesioner usability digunakan untuk mengevaluasi persepsi pengguna terhadap kemudahan penggunaan, kejelasan informasi, dan kenyamanan antarmuka sistem.
+Data primer ini digunakan sebagai dasar dalam perancangan fitur, alur informasi, dan penyajian hasil prediksi pada aplikasi mitigasi gempa, sehingga sistem yang dikembangkan sesuai dengan kebutuhan dan karakteristik pengguna.
+Data Sekunder
+Data sekunder yang digunakan dalam penelitian ini berupa data gempa bumi historis yang diperoleh dari sumber resmi, seperti Badan Meteorologi, Klimatologi, dan Geofisika (BMKG). Data gempa yang digunakan meliputi parameter dasar gempa, antara lain magnitudo gempa, kedalaman gempa, serta lokasi kejadian gempa dalam bentuk koordinat geografis.
+Data sekunder ini digunakan sebagai masukan dalam pengembangan modul prediksi probabilitas dampak guncangan gempa. Pemilihan parameter gempa didasarkan pada relevansinya terhadap analisis dampak guncangan dan ketersediaan data yang dapat diperoleh secara konsisten. Data sekunder tidak digunakan untuk memprediksi kejadian gempa, melainkan untuk mendukung penyajian estimasi probabilitas dampak sebagai bagian dari sistem mitigasi.
+Alasan Pemilihan Metode
+Pemilihan metode dalam penelitian ini didasarkan pada tujuan penelitian yang berfokus pada pengembangan sistem mitigasi gempa berbasis Android yang berorientasi pada pengguna. Penelitian ini tidak diarahkan pada optimasi atau perbandingan performa algoritma machine learning, melainkan pada perancangan dan evaluasi sistem informasi sebagai media mitigasi non-struktural yang mudah dipahami dan digunakan oleh masyarakat.
+Pendekatan Design Science Research dipilih sebagai kerangka metodologis utama karena penelitian ini bertujuan untuk menghasilkan artefak berupa sistem mitigasi gempa. Pendekatan ini memungkinkan proses pengembangan sistem dilakukan secara sistematis, mulai dari identifikasi kebutuhan pengguna, perancangan dan pembangunan artefak, hingga evaluasi kelayakan sistem. Design Science Research dinilai sesuai karena menempatkan solusi teknologi sebagai sarana untuk menyelesaikan permasalahan praktis yang dihadapi masyarakat, bukan sekadar sebagai objek pengujian teknis.
+Penggunaan metode kualitatif dalam pengumpulan data dipilih untuk memperoleh pemahaman yang mendalam mengenai kebutuhan, persepsi, dan pengalaman pengguna dalam memanfaatkan aplikasi mitigasi gempa. Pendekatan ini dianggap lebih relevan dibandingkan pendekatan kuantitatif murni, mengingat tujuan penelitian adalah meningkatkan pemahaman dan kesiapsiagaan masyarakat melalui penyajian informasi yang mudah dipahami, bukan untuk melakukan generalisasi statistik dalam skala besar
+Model Logistic Regression dipilih sebagai metode analitik pendukung dalam sistem karena kemampuannya menghasilkan keluaran berupa probabilitas yang relatif mudah diinterpretasikan. Keluaran probabilistik dianggap lebih sesuai dalam konteks mitigasi gempa, di mana risiko tidak bersifat pasti dan perlu dikomunikasikan sebagai estimasi kemungkinan dampak. Struktur model Logistic Regression yang sederhana dan transparan juga memungkinkan hasil prediksi dijelaskan secara konseptual kepada pengguna tanpa memerlukan pemahaman teknis yang kompleks.
+Metode machine learning lain yang lebih kompleks tidak dipilih dalam penelitian ini karena dapat menghasilkan model yang sulit diinterpretasikan dan berpotensi mengaburkan tujuan utama sistem mitigasi, yaitu penyampaian informasi risiko secara sederhana dan bertanggung jawab. Dengan demikian, pemilihan Logistic Regression didasarkan pada kesesuaian metode dengan tujuan sistem, keterbatasan data, serta kebutuhan interpretabilitas dalam komunikasi risiko kepada masyarakat.
+Secara keseluruhan, pemilihan metode dalam penelitian ini didasarkan pada keseimbangan antara kebutuhan akan dukungan analitik, kemudahan interpretasi, dan relevansi terhadap tujuan mitigasi non-struktural. Dengan pendekatan ini, sistem yang dikembangkan diharapkan tidak hanya layak secara teknis, tetapi juga bermanfaat secara praktis dalam meningkatkan pemahaman dan kesiapsiagaan masyarakat terhadap risiko gempa bumi di kawasan Sesar Lembang.
+HASIL DAN PEMBAHASAN
+Hasil Preprocessing Data
+Tahap preprocessing merupakan fondasi dari seluruh proses analisis dalam penelitian ini. Data mentah yang diperoleh dari katalog USGS periode 1990 hingga 2026 terdiri dari tujuh file terpisah per periode yang kemudian digabungkan menjadi satu dataset terpadu. Setelah dilakukan filter berdasarkan kolom type = "earthquake" untuk memastikan hanya kejadian gempa bumi yang dianalisis, total data yang berhasil dikumpulkan adalah 63.413 baris kejadian seismik.
+Proses preprocessing mencakup beberapa tahapan utama. Pertama, ekstraksi fitur temporal dari kolom time, yaitu bulan dan jam, dilakukan untuk menangkap pola musiman dan diurnal dari aktivitas seismik. Kedua, pemilihan delapan fitur aktif dilakukan berdasarkan relevansi terhadap karakteristik seismik dan ketersediaan data, yaitu latitude, longitude, depth, gap, dmin, nst, bulan, dan jam. Kolom magnitudo secara eksplisit tidak diikutsertakan sebagai fitur model untuk menghindari potensi data leakage, karena tujuan penelitian ini adalah mendeteksi anomali berdasarkan profil multi-dimensional fitur seismik, bukan berdasarkan kekuatan getaran.
+Ketiga, penanganan missing value dilakukan secara khusus pada tiga fitur kualitas rekaman seismik yang memiliki jumlah nilai kosong yang signifikan, sebagaimana disajikan pada Tabel IV.1.
+Fitur
+Jumlah Kosong
+Persentase
+Penyebab Utama
+
+gap
+15.615
+24.6%
+Keterbatasan infrastruktur sensor
+
+dmin
+37.251
+58.7%
+Keterbatasan infrastruktur sensor
+
+nst
+30.155
+47.6%
+Keterbatasan infrastruktur sensor
+
+Tingginya jumlah missing value pada ketiga fitur tersebut berkaitan erat dengan kondisi infrastruktur jaringan sensor seismik yang belum merata pada periode awal katalog. Stasiun seismik di wilayah-wilayah tertentu belum mampu mencatat parameter kualitas rekaman secara konsisten, sehingga nilai gap, dmin, dan nst tidak selalu tersedia untuk setiap kejadian gempa. Penanganan terhadap kondisi ini dibahas lebih lanjut pada Subbab IV.2.
+Setelah seluruh tahapan preprocessing selesai, dataset final yang digunakan dalam pemodelan terdiri dari 63.413 baris dengan delapan fitur aktif tanpa nilai kosong. Tidak ada data yang dibuang dalam proses ini, sehingga seluruh kejadian seismik dalam katalog dapat dimanfaatkan secara optimal dalam tahap pemodelan selanjutnya.
+Perbandingan Imputasi Median dan Drop Kolom
+Permasalahan missing value yang tinggi pada fitur gap, dmin, dan nst memunculkan dua pendekatan penanganan yang perlu dibandingkan secara empiris, yaitu imputasi median dan drop kolom. Imputasi median menggantikan nilai kosong dengan nilai tengah dari masing-masing kolom, sementara pendekatan drop kolom menghilangkan ketiga fitur tersebut dari proses pemodelan. Perbandingan ini penting dilakukan karena pemilihan strategi penanganan missing value berdampak langsung pada kualitas fitur yang digunakan model dan hasil prediksi yang
+dihasilkan.
+(tabel hasil perbandingan dari kedua pendekatan)
+Metrik
+Drop Kolom
+Imputasi Median
+
+Accuracy (train)
+0.3510
+0.6776
+
+Accuracy (test)
+0.3105
+0.6635
+
+Precision
+0.1617
+0.2948
+
+Recall
+0.8991
+0.9509
+
+F1 Score
+0.2741
+0.4501
+
+AUC-ROC
+0.6390
+0.9105
+
+Hasil perbandingan menunjukkan bahwa pendekatan imputasi median secara konsisten unggul di seluruh metrik evaluasi dibandingkan drop kolom. Perbedaan paling mencolok terlihat pada nilai AUC-ROC, di mana imputasi median menghasilkan nilai 0.9105 dibandingkan 0.6390 pada drop kolom, selisih yang cukup besar dan secara praktis bermakna dalam konteks klasifikasi anomali. Selisih accuracy pada data uji juga cukup signifikan, yaitu 0.6635 berbanding 0.3105.
+Keunggulan imputasi median ini dapat dijelaskan melalui dua alasan utama. Pertama, fitur gap, dmin, dan nst merupakan dimensi kualitas rekaman yang tidak dapat diabaikan begitu saja, karena ketiganya berkontribusi dalam membentuk profil multi-dimensional kejadian seismik. Menghilangkan ketiga fitur ini sekaligus menyebabkan model kehilangan informasi penting mengenai karakteristik rekaman yang justru menjadi salah satu dimensi definisi anomali dalam penelitian ini. Kedua, imputasi median mempertahankan seluruh 63.413 data untuk proses pelatihan, sementara drop kolom secara tidak langsung juga membuang informasi yang terkandung dalam variasi fitur-fitur tersebut pada data yang sebenarnya memiliki nilai lengkap.
+Berdasarkan hasil perbandingan ini, imputasi median dipilih sebagai strategi penanganan missing value yang digunakan dalam seluruh tahapan pemodelan selanjutnya.
+Hasil Labeling Isolation Forest
+Sebelum model XGBoost dilatih, tahap labeling menggunakan Isolation Forest dilakukan terlebih dahulu untuk menghasilkan label anomali dan normal pada seluruh dataset. Isolation Forest dijalankan dengan parameter contamination = 0.05, yang berarti model mengasumsikan proporsi kejadian anomali sebesar 5% dari total data. Nilai ini dipilih berdasarkan eksperimen dengan tiga nilai contamination berbeda (0.01, 0.05, dan 0.10), di mana nilai 0.05 menghasilkan distribusi label yang paling konsisten dengan ekspektasi pola seismisitas historis Indonesia.
+Sebelum masuk ke Isolation Forest, seluruh fitur di-scale menggunakan StandardScaler untuk memastikan tidak ada fitur yang mendominasi proses isolasi hanya karena perbedaan skala nilai. Hasil labeling Isolation Forest pada keseluruhan dataset disajikan pada Tabel IV.3.
+Split
+Normal
+Anomali
+Total
+
+Train
+48.193
+2.537
+50.730
+
+Test
+12.032
+651
+12.683
+
+Total
+60.225
+3.188
+63.413
+
+Proporsi
+94.97%
+5.03%
+100%
+
+Distribusi label menunjukkan 60.225 kejadian normal (94.97%) dan 3.188 kejadian anomali (5.03%), konsisten dengan parameter contamination yang ditetapkan. Label ini selanjutnya digunakan sebagai target pelatihan model XGBoost dalam tahap supervised learning.
+Evaluasi Model XGBoost
+Model XGBoost dilatih menggunakan label hasil Isolation Forest dengan pembagian data 80% untuk pelatihan (50.730 baris) dan 20% untuk pengujian (12.683 baris). Hyperparameter optimal diperoleh melalui RandomizedSearchCV dengan 40 iterasi dan validasi silang 5-fold, menggunakan metrik optimasi area under precision-recall curve (AUCPR) yang lebih sensitif terhadap ketidakseimbangan kelas dibandingkan AUC-ROC standar. Early stopping diterapkan dengan patience 20 ronde untuk mencegah overfitting selama pelatihan.
+(tabel hyperparameter terpilih hasil tuning)
+(Hyperparameter terpilih model xgboost)
+Parameter
+Nilai
+
+n_estimators
+300
+
+Max_depth
+6
+
+Learning_rate
+0.1
+
+subsample
+0.8
+
+Colsampe_bytree
+0.8
+
+Min_child_weight
+5
+
+Reg_alpha
+0.1
+
+Reg_lambda
+1
+
+Scale_pos_weight
+19.0 (cek lagi)
+
+Early_stopping_rounds
+20
+
+Eval_metric
+aucpr
+
+Parameter scale_pos_weight diatur secara otomatis berdasarkan rasio kelas normal terhadap anomali 19, yang berfungsi untuk mengompensasi ketidakseimbangan kelas dalam proses pelatihan. Model berhenti pada iterasi ke-295 dari 300 yang direncanakan berdasarkan kriteria early stopping.
+Metrik Evaluasi
+Hasil evaluasi model XGBoost pada data latih dan data uji disajikan pada Tabel IV.5.
+Metrik
+Nilai
+
+Accuracy (train)
+0.9950
+
+Accuracy (test)
+0.9860
+
+Precision
+0.8141
+
+Recall (Anomali)
+0.9416
+
+F1 Score (Anomali)
+0.8732
+
+AUC-ROC
+0.9981
+
+Best F1 CV (5-Fold)
+0.8828
+
+Model XGBoost menghasilkan accuracy sebesar 0.9860 pada data uji dengan selisih terhadap data latih sebesar 0.009, menunjukkan bahwa model tidak mengalami overfitting yang berarti. Nilai recall sebesar 0.9416 pada kelas anomali merupakan capaian yang sangat penting dalam konteks deteksi anomali seismisitas, karena recall yang tinggi berarti model mampu mendeteksi sebagian besar kejadian anomali yang sesungguhnya ada dalam data. Dalam konteks mitigasi bencana, miss detection (gagal mendeteksi anomali yang nyata) jauh lebih berisiko daripada false alarm, sehingga nilai recall yang tinggi menjadi prioritas utama dibandingkan precision.
+Nilai AUC-ROC sebesar 0.9981 mengindikasikan kemampuan diskriminasi model yang sangat baik antara kelas normal dan anomali secara keseluruhan. Nilai F1 Score sebesar 0.8732 menunjukkan keseimbangan yang baik antara precision dan recall, sementara Best F1 CV 5-fold sebesar 0.8828 mengkonfirmasi bahwa performa model konsisten dan tidak bergantung pada satu partisi data tertentu.
+Confusion Matrix
+(gambar confusion matrix)
+(confusion matrix model xgboost pada data uji)
+Analisis SHAP
+Salah satu keterbatasan utama model machine learning berbasis ensemble seperti XGBoost adalah sifatnya yang cenderung seperti kotak hitam, di mana proses pengambilan keputusan internal sulit dijelaskan secara intuitif. Untuk mengatasi hal ini, analisis SHAP (SHapley Additive exPlanations) diterapkan guna mengukur kontribusi setiap fitur terhadap prediksi model secara individual maupun agregat. Pendekatan SHAP berbasis teori permainan Shapley, sehingga nilai yang dihasilkan mencerminkan kontribusi marginal setiap fitur dengan mempertimbangkan seluruh kemungkinan kombinasi fitur lainnya.
+Urutan Kepentingan Fitur
+(gambar shap bar chart)
+Arah Pengaruh Fitur (Beeswarm Analysis)
+(gambar shap beeswarm)
+Validasi Distribusi Label terhadap Magnitude
+Salah satu pertanyaan kritis dalam penelitian ini adalah apakah model Isolation Forest secara tidak sengaja menjadikan magnitude sebagai proxy dalam menentukan label anomali, meskipun kolom mag tidak diikutsertakan sebagai fitur. Untuk menjawab pertanyaan ini, dilakukan validasi dengan membandingkan distribusi persentase anomali pada berbagai rentang magnitude.
+(hasil validasi distribusi label)
+Rentang Mag
+Total Gempa
+Jumlah Anomali
+Persentase Anomali
+
+< 3
+22
+0
+0%
+
+3 – 4
+7.325
+379
+5.17%
+
+4 – 5
+48.529
+2.401
+4.95%
+
+5 – 6
+6.929
+379
+5.47%
+
+6 – 7
+542
+26
+4.80%
+
+≥ 7
+66
+3
+4.55%
+
+M ≥ 5
+9.863
+408
+5.05%
+
+M < 5
+53.550
+2.780
+5.19%
+
+Rasio
+-
+-
+1.03x
+
+Hasil validasi menunjukkan distribusi persentase anomali yang sangat merata di seluruh rentang magnitude, berkisar antara 4.55% hingga 5.47%. Perbandingan antara gempa M≥5 dan M<5 menghasilkan rasio 1.03x, yang secara praktis tidak berbeda signifikan. Temuan ini secara kuat mengkonfirmasi bahwa model Isolation Forest benar-benar bekerja independen dari magnitude dalam menentukan label anomali.
+Implikasi dari temuan ini sangat penting untuk dipahami oleh pengguna sistem. Gempa besar belum tentu anomali apabila profilnya konsisten dengan sejarah seismisitas. Sebaliknya, gempa kecil pun dapat terdeteksi sebagai anomali apabila kombinasi fitur spasial, kedalaman, dan kualitas rekamannya menyimpang dari pola historis. Pendekatan ini membuka perspektif baru dalam analisis seismisitas yang selama ini terlalu bergantung pada magnitude sebagai satu-satunya ukuran "keanehan" suatu kejadian gempa.
+Catatan khusus untuk rentang magnitude < 3: dari hanya 22 kejadian yang tercatat dalam katalog, tidak ada yang terdeteksi sebagai anomali. Jumlah data yang sangat kecil pada rentang ini tidak cukup representatif untuk ditarik kesimpulan, sehingga tidak memengaruhi interpretasi keseluruhan validasi.
+Profil Komparatif Fitur Anomali dan Normal
+Untuk melengkapi pemahaman mengenai karakteristik kejadian yang terdeteksi sebagai anomali, dilakukan analisis komparatif rata-rata fitur antara kelas anomali dan normal pada data uji. Tabel IV.8 menyajikan hasil perbandingan tersebut.
+Fitur
+Normal
+Anomali
+Selisih
+
+Depth
+72.957 km
+273.560 km
++274.8%
+
+Nst
+29.365
+106.023
++261.1%
+
+gap
+106.981°
+78.076°
+-27.0%
+
+Dmin
+2.142°
+3.462°
++61.6%
+
+Perbedaan paling mencolok terdapat pada fitur depth, di mana kejadian anomali rata-rata terjadi pada kedalaman 273.56 km dibandingkan 72.96 km pada kejadian normal. Ini merupakan selisih yang sangat besar dan menjadi karakteristik utama pembeda antara kedua kelas. Gempa pada kedalaman lebih dari 200 km dikategorikan sebagai gempa dalam menurut klasifikasi seismologi internasional, dan kejadian semacam ini memang relatif jarang dibandingkan gempa dangkal (0-70 km) yang mendominasi katalog seismik Indonesia.
+Fitur nst yang rata-rata jauh lebih tinggi pada kelas anomali (106.02 berbanding 29.37) merupakan konsekuensi langsung dari karakteristik depth yang lebih dalam, sebagaimana telah dijelaskan pada analisis SHAP. Gap yang lebih kecil pada anomali (78.08° berbanding 106.9°) juga konsisten dengan pola yang sama: gempa dalam yang terdeteksi secara luas oleh banyak stasiun dari berbagai arah menghasilkan distribusi azimuthal yang lebih merata.
+Temuan ini secara keseluruhan membentuk profil yang koheren: anomali dalam dataset ini didominasi oleh kejadian gempa yang terjadi pada kedalaman sangat dalam, yang merupakan kejadian tidak lazim dalam konteks seismisitas Indonesia secara historis dan terdeteksi oleh jaringan sensor yang lebih luas dari berbagai penjuru.
+Implementasi Aplikasi Android
+Hasil deteksi anomali yang dihasilkan oleh pipeline Isolation Forest dan XGBoost diimplementasikan ke dalam aplikasi berbasis Android sebagai media penyampaian informasi kepada masyarakat. Aplikasi ini dirancang dengan prinsip bahwa output teknis model tidak disajikan secara mentah kepada pengguna, melainkan diterjemahkan ke dalam format informasi yang sederhana, kontekstual, dan mudah dipahami oleh masyarakat awam tanpa latar belakang teknis seismologi.
+Arsitektur Informasi Aplikasi
+Aplikasi Android yang dikembangkan menyimpan model XGBoost dan StandardScaler dalam format file pkl (model_anomali.pkl dan scaler_anomali.pkl) yang diintegrasikan ke dalam backend aplikasi. Ketika data gempa baru masuk, sistem secara otomatis melakukan preprocessing menggunakan scaler yang tersimpan, menjalankan prediksi menggunakan model XGBoost, dan menerjemahkan hasilnya ke dalam informasi yang dapat ditampilkan di antarmuka pengguna.
+(gambar diagram arsitektur sistem)
+Translasi Output Model ke Informasi Pengguna
+Salah satu tantangan utama dalam pengembangan aplikasi ini adalah menjembatani kesenjangan antara output teknis model dan kebutuhan informasi masyarakat awam. Tabel IV.9 menyajikan pemetaan translasi yang diterapkan dalam aplikasi.
+(tabel output asli dan informasi yang akan ditampilkan ke pengguna)
+Pendekatan translasi ini memastikan bahwa pengguna menerima informasi yang bermakna dan dapat ditindaklanjuti, bukan sekadar angka teknis yang tidak memiliki relevansi langsung dalam kehidupan sehari-hari. Kata "anomali" sendiri tidak ditampilkan secaraeksplisit kepada pengguna karena istilah tersebut berpotensi menimbulkan kecemasan yang tidak proporsional tanpa konteks yang memadai.
+Fitur Utama Aplikasi
+Evaluasi Usability Aplikasi
+Pembahasan Umum
+DAFTAR PUSTAKA
+Abramovich, F., & Grinshtein, V. (2019). High-Dimensional Classification by Sparse Logistic Regression. IEEE Transactions on Information Theory, 65(5), 3068–3079. https://doi.org/10.1109/TIT.2018.2884963
+Budimir, M. E. A., Atkinson, P. M., & Lewis, H. G. (2015). A systematic review of landslide probability mapping using logistic regression. In Landslides (Vol. 12, Issue 3, pp. 419–436). Springer Verlag. https://doi.org/10.1007/s10346-014-0550-5
+Li, N., & Jimenez, R. (2018). A logistic regression classifier for long-term probabilistic prediction of rock burst hazard. Natural Hazards, 90(1), 197–215. https://doi.org/10.1007/s11069-017-3044-7
+Asim, K. M., Martínez-Álvarez, F., Basit, A., & Iqbal, T. (2017). Earthquake magnitude prediction in Hindukush region using machine learning techniques. Natural Hazards, 85(1), 471–486. https://doi.org/10.1007/s11069-016-2579-3
+Jena, R., Pradhan, B., Beydoun, G., Alamri, A. M., Ardiansyah, Nizamuddin, & Sofyan, H. (2020). Earthquake hazard and risk assessment using machine learning approaches at Palu, Indonesia. Science of the Total Environment, 749. https://doi.org/10.1016/j.scitotenv.2020.141582
+Mangalathu, S., Sun, H., Nweke, C. C., Yi, Z., Burton, H. v, & Eeri, M. (2020). Classifying Earthquake Damage to Buildings Using Machine Learning. http://eqclearinghouse.org/map/2014-08-24-south-napa/
+Mousavi, S. M., & Beroza, G. C. (2025). Machine Learning in Earthquake Seismology. Annual Review of Earth and Planetary Sciences Downloaded from Www.Annualreviews.Org. Guest, 36, 6. https://doi.org/10.1146/annurev-earth-071822
+Zhang, Y., Burton, H. v., Sun, H., & Shokrabadi, M. (2018). A machine learning framework for assessing post-earthquake structural safety. Structural Safety, 72, 1–16. https://doi.org/10.1016/j.strusafe.2017.12.001
+Kiswiranti, D. (2019). SEISMOLOGI (Dasar-dasar Seismologi dan Apilikasinya).
+Mase, L. Z. (2020). Seismic Hazard Vulnerability of Bengkulu City, Indonesia, Based on Deterministic Seismic Hazard Analysis. Geotechnical and Geological Engineering, 38(5), 5433–5455. https://doi.org/10.1007/s10706-020-01375-6
+Nishida, K. (2017). Ambient seismic wave field. In Proceedings of the Japan Academy Series B: Physical and Biological Sciences (Vol. 93, Issue 7, pp. 423–448). Japan Academy. https://doi.org/10.2183/pjab.93.026
+Obara, K., & Kato, A. (2016). Connecting slow earthquakes to huge earthquakes. http://science.sciencemag.org/
+Qolbi, A.-Z. A., Deviani, C. N. P., Aditya, D., & Sutisna, V. C. A. P. (2024). Pengaruh Sosialisasi Mitigasi Bencana Sesar Lembang terhadap Pemahaman Risiko dan Mitigasi Bencana pada Remaja di Zona Sesar Lembang. Jurnal Pendidikan Non Formal, 1(4), 8. https://doi.org/10.47134/jpn.v1i4.566
+Riedel, I., Guéguen, P., Dalla Mura, M., Pathier, E., Leduc, T., & Chanussot, J. (2015). Seismic vulnerability assessment of urban environments in moderate-to-low seismic hazard regions using association rule learning and support vector machine methods. Natural Hazards, 76(2), 1111–1141. https://doi.org/10.1007/s11069-014-1538-0
+Arinta, R. R. (2020). Natural Disaster Application on Big Data and Machine Learning: A Review.
+Chamola, V., Hassija, V., Gupta, S., Goyal, A., Guizani, M., & Sikdar, B. (2021). Disaster and Pandemic Management Using Machine Learning: A Survey. In IEEE Internet of Things Journal (Vol. 8, Issue 21, pp. 16047–16071). Institute of Electrical and Electronics Engineers Inc. https://doi.org/10.1109/JIOT.2020.3044966
+Linardos, V., Drakaki, M., Tzionas, P., & Karnavas, Y. L. (2022). Machine Learning in Disaster Management: Recent Developments in Methods and Applications. In Machine Learning and Knowledge Extraction (Vol. 4, Issue 2, pp. 446–473). MDPI. https://doi.org/10.3390/make4020020
+Lu, S., Christie, G. A., Nguyen, T. T., Freeman, J. D., & Hsu, E. B. (2022). Applications of Artificial Intelligence and Machine Learning in Disasters and Public Health Emergencies. In Disaster Medicine and Public Health Preparedness (Vol. 16, Issue 4, pp. 1674–1681). Cambridge University Press. https://doi.org/10.1017/dmp.2021.125
+Sreelakshmi, S., & Vinod Chandra, S. S. (2022). Machine Learning for Disaster Management: Insights from past research and future implications. Proceedings of International Conference on Computing, Communication, Security and Intelligent Systems, IC3SIS 2022. https://doi.org/10.1109/IC3SIS54991.2022.9885494
+LAMPIRAN
+/
+Lampiran 1 Wawancara ke satu
+/
+Lampiran 2 Wawancara ke dua
+/
+Lampiran 3 Wawancara ke tiga
+/
+Lampiran 4 Hasil Wawancara

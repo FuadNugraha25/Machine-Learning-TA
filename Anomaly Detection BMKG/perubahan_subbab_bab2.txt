@@ -1,0 +1,41 @@
+Rincian Perubahan Sub-bab pada BAB II TINJAUAN PUSTAKA
+
+[TETAP]
+II.1 Gempa Bumi
+    II.1.1 Pengertian Gempa Bumi
+    II.1.2 Parameter Dasar Gempa Bumi
+
+[DIUBAH SEBAGIAN]
+II.2 Sistem Informasi dan Aplikasi Android dalam Mitigasi Gempa
+    II.2.1 Sistem Informasi Kebencanaan (Tetap)
+    II.2.2 Aplikasi Berbasis Android sebagai Media Mitigasi (Tetap)
+    II.2.3 Integrasi Analisis Data Otomatis dalam Aplikasi Mobile (Diubah dari "Integrasi Sistem Prediksi dalam Aplikasi Mobile")
+    II.2.4 Penyajian Informasi Mitigasi Gempa pada Aplikasi Android (Tetap)
+
+[DIUBAH TOTAL]
+II.3 Deteksi Anomali Seismik pada Mitigasi Gempa (Diubah dari "Prediksi Probabilitas Dampak Gempa")
+    II.3.1 Konsep Anomali dalam Konteks Seismologi (Diubah dari "Konsep Prediksi dalam Sistem Mitigasi")
+    II.3.2 Deteksi Anomali sebagai Pendekatan Analisis Bencana (Diubah dari "Prediksi Probabilitas sebagai Pendekatan Risiko")
+    II.3.3 Variabel Penentu Karakteristik Gempa (Diubah dari "Variabel Penentu Dampak Guncangan Gempa")
+
+[DIUBAH SEBAGIAN / PENYESUAIAN]
+II.4 Machine Learning dalam Analisis Data Seismik (Diubah dari "Machine Learning dalam Prediksi Dampak Gempa")
+    II.4.1 Pengenalan Machine Learning (Tetap / Penyesuaian Sedikit)
+    II.4.2 Unsupervised Learning (Diubah dari "Supervised Learning")
+    II.4.3 Model Anomaly Detection (Diubah dari "Model Klasifikasi Berbasis Probabilistik")
+
+[DIUBAH TOTAL]
+II.5 Isolation Forest (Diubah total dari "Logistic Regression")
+    II.5.1 Konsep Dasar Isolation Forest (Diubah dari "Konsep Dasar Logistic Regression")
+    II.5.2 Algoritma Partisi dan Penghitungan Anomaly Score (Diubah dari "Fungsi Sigmoid dan Interpretasi Probabilitas")
+    II.5.3 Isolation Forest dalam Analisis Data Seismik (Diubah dari "Logistic Regression dalam Prediksi Risiko Bencana")
+    II.5.4 Kelebihan dan Kekurangan Isolation Forest (Diubah dari "Kelebihan dan Kekurangan")
+
+[DIUBAH TOTAL]
+II.6 Evaluasi Model Deteksi Anomali (Diubah total dari "Evaluasi Model Prediksi")
+    II.6.1 Analisis Distribusi Anomaly Score (Diubah dari "Confusion Matrix")
+    II.6.2 Visualisasi Komparatif Kelas Anomali dan Normal (Diubah dari "Accuracy, Precision, Recall, dan AUC")
+    II.6.3 Interpretasi Hasil Deteksi untuk Informasi Mitigasi (Diubah dari "Interpretasi Hasil Prediksi untuk Mitigasi")
+
+[TETAP]
+II.7 State of the Art
