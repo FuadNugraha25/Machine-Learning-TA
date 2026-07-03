@@ -1,0 +1,104 @@
+--- Cell 1 ---
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Machine Learning
+from sklearn.ensemble import IsolationForest
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+import xgboost as xgb
+import shap
+
+import warnings
+warnings.filterwarnings('ignore')
+
+print("Libraries imported successfully!")
+-----------------
+--- Cell 14 ---
+# 4. Feature Engineering & Preprocessing
+Memilih fitur yang relevan untuk deteksi anomali, lalu melakukan standarisasi (*StandardScaler*) agar skala setiap fitur seragam dan tidak ada yang mendominasi saat dianalisis oleh algoritma Isolation Forest.
+-----------------
+--- Cell 15 ---
+# 1. Pilih Fitur sesuai kriteria baru
+features = ['mag', 'depth', 'latitude', 'longitude']
+X = df[features]
+
+# Statistik sebelum di-scale
+print("Statistik SEBELUM di-scale:")
+display(X.describe())
+
+# 2. Standarisasi menggunakan StandardScaler
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Mengubah numpy array kembali ke DataFrame
+X_scaled_df = pd.DataFrame(X_scaled, columns=features)
+
+# Menampilkan Mean dan Standard Deviation SETELAH di-scale
+print("\nMean setelah di-scale (harus mendekati 0):")
+print(X_scaled_df.mean())
+print("\nStandard Deviation setelah di-scale (harus mendekati 1):")
+print(X_scaled_df.std())
+-----------------
+--- Cell 17 ---
+import joblib
+
+# Menyiapkan parameter perbandingan
+contaminations = [0.005, 0.01]
+anomaly_labels = {}
+anomaly_scores = {}
+
+total_data = len(X_scaled_df)
+print(f"1. Total Data Keseluruhan: {total_data}\n" + "-"*40)
+
+for cont in contaminations:
+    # Inisialisasi model dengan Random State 42
+    iso_forest = IsolationForest(contamination=cont, random_state=42)
+    
+    # Fit & Predict (-1 untuk Anomali, 1 untuk Normal)
+    labels = iso_forest.fit_predict(X_scaled_df)
+    
+    # Hitung Anomaly Score (semakin negatif = semakin anomali)
+    scores = iso_forest.decision_function(X_scaled_df)
+    
+    # Simpan hasil untuk tiap contamination
+    anomaly_labels[cont] = labels
+    anomaly_scores[cont] = scores
+    
+    # Hitung statistik
+    total_anomaly = (labels == -1).sum()
+    total_normal = (labels == 1).sum()
+    persentase_anomaly = (total_anomaly / total_data) * 100
+    
+    # Cetak output sesuai permintaan
+    print(f"[ Hasil untuk Contamination {cont} ]")
+    print(f"2. Total Normal   : {total_normal}")
+    print(f"3. Total Anomaly  : {total_anomaly}")
+    print(f"4. Persentase     : {persentase_anomaly:.2f}%\n")
+
+# Menyimpan hasil contamination 0.005 (target utama proyek) ke dalam DataFrame
+df['anomaly_label'] = anomaly_labels[0.005]
+df['anomaly_score'] = anomaly_scores[0.005]
+
+# Menyimpan anomaly score ke dalam folder yang sama
+csv_path = '../Anomaly Detection BMKG/dataset_dengan_anomali.csv'
+df.to_csv(csv_path, index=False)
+print(f"Dataset beserta Anomaly Score (0.005) berhasil disimpan di: {csv_path}")
+-----------------
+--- Cell 33 ---
+import pickle
+
+# Melatih ulang model khusus untuk target utama (0.005) agar kita menyimpan model yang tepat
+# (Karena sebelumnya di dalam loop, variabel iso_forest terganti oleh model 0.01 di iterasi terakhir)
+final_iso_forest = IsolationForest(contamination=0.005, random_state=42)
+final_iso_forest.fit(X_scaled_df)
+
+nama_file = 'isolation_forest_bmkg.pkl'
+with open(nama_file, 'wb') as f:
+    pickle.dump(final_iso_forest, f)
+
+print(f"Model Isolation Forest (contamination=0.005) berhasil disimpan dengan nama: {nama_file}!")
+-----------------

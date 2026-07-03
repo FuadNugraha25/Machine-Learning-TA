@@ -13,10 +13,10 @@ II.2 Sistem Informasi dan Aplikasi Android dalam Mitigasi Gempa
     II.2.4 Penyajian Informasi Mitigasi Gempa pada Aplikasi Android (Tetap)
 
 [DIUBAH TOTAL]
-II.3 Deteksi Anomali Seismik pada Mitigasi Gempa (Diubah dari "Prediksi Probabilitas Dampak Gempa")
-    II.3.1 Konsep Anomali dalam Konteks Seismologi (Diubah dari "Konsep Prediksi dalam Sistem Mitigasi")
-    II.3.2 Deteksi Anomali sebagai Pendekatan Analisis Bencana (Diubah dari "Prediksi Probabilitas sebagai Pendekatan Risiko")
-    II.3.3 Variabel Penentu Karakteristik Gempa (Diubah dari "Variabel Penentu Dampak Guncangan Gempa")
+II.3 Deteksi Anomali pada Data Historis Gempa Bumi (Diubah dari "Deteksi Anomali Seismik pada Mitigasi Gempa")
+    II.3.1 Konsep Anomali dalam Konteks Seismologi (Tetap)
+    II.3.2 Deteksi Anomali sebagai Pendekatan Analisis Karakteristik Kejadian Gempa (Diubah dari "Deteksi Anomali sebagai Pendekatan Analisis Bencana")
+    II.3.3 Variabel Penentu Status Anomali (Magnitudo, Kedalaman, dan Koordinat) (Diubah dari "Variabel Penentu Karakteristik Gempa")
 
 [DIUBAH SEBAGIAN / PENYESUAIAN]
 II.4 Machine Learning dalam Analisis Data Seismik (Diubah dari "Machine Learning dalam Prediksi Dampak Gempa")

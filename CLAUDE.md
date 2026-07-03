@@ -84,4 +84,4 @@ Lokasi file laporan utama yang dapat diedit secara otomatis:
 2. SELALU gunakan **COM Automation secara live** (misal: dengan skrip Python via library `win32com.client`). 
 3. Anda harus menulis skrip Python dengan `win32com.client.Dispatch("Word.Application")` dan mencari dokumen yang sedang terbuka di `word.Documents`.
 4. Dengan cara ini, user dapat melihat perubahannya secara langsung secara "live" tanpa perlu menutup aplikasinya.
-5. Setelah skrip Python yang dibuat (misalnya di folder `scratch/`) selesai dieksekusi untuk membaca atau mengedit Word, skrip tersebut WAJIB langsung dihapus agar file tidak menumpuk.
+5. Skrip Python yang dibuat (misalnya di folder `scratch/`) untuk membaca atau mengedit Word tidak perlu dihapus dan dibiarkan saja sebagai jejak rekam kerja.
