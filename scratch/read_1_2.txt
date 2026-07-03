@@ -1,0 +1,20 @@
+[216] (Heading 2): Rumusan Masalah
+[217] (Normal): Rumusan masalah yang mendasari penelitian ini adalah:
+[218] (Normal): Bagaimana merancang dan mengintegrasikan model deteksi anomali tersebut ke dalam Aplikasi AMANIN agar mampu menyajikan wawasan mitigasi (insight) yang cerdas dan proaktif kepada masyarakat?
+[219] (Normal): Bagaimana mengimplementasikan algoritma Isolation Forest untuk mendeteksi kejadian anomali seismik secara otomatis pada data historis kegempaan BMKG yang berdimensi multivariat, tidak berlabel, dan tidak memiliki ground truth?
+[220] (Normal): Bagaimana mengevaluasi persebaran anomaly score dan batas ambang (threshold) yang dihasilkan oleh model untuk memastikan bahwa kejadian yang diisolasi benar-benar memiliki karakteristik gempa yang tidak wajar?
+[221] (Heading 2): Tujuan Penelitian
+[222] (Normal): Berdasarkan rumusan masalah sebelumnya, tujuan penelitian dapat diuraikan sebagai berikut:
+[223] (Normal): Mengolah dan memanfaatkan data historis gempa bumi BMKG periode 2008–2026 sebagai sumber data dalam proses deteksi anomali gempa bumi.
+[224] (Normal): Menerapkan algoritma Isolation Forest pada data gempa bumi berdasarkan parameter magnitudo, kedalaman, latitude, dan longitude untuk mengidentifikasi kejadian gempa yang memiliki karakteristik berbeda dari pola kejadian gempa pada umumnya.
+[225] (Normal): Menganalisis hasil deteksi anomali yang dihasilkan oleh algoritma Isolation Forest melalui visualisasi dan interpretasi karakteristik data gempa yang teridentifikasi sebagai anomali.
+[226] (List Paragraph): Mengintegrasikan hasil deteksi anomali menggunakan Isolation Forest ke dalam backend sistem guna mendukung pengolahan informasi pada Aplikasi AMANIN.
+[227] (List Paragraph): Mengimplementasikan hasil deteksi anomali pada Aplikasi AMANIN sebagai sarana penyampaian informasi mitigasi gempa berbasis Android.
+[228] (Heading 2): Batasan Penelitian
+[229] (Normal): Penelitian ini dibatasi pada beberapa hal yaitu :
+[230] (Normal): Data yang digunakan dalam penelitian ini merupakan data historis gempa bumi yang diperoleh dari Badan Meteorologi, Klimatologi, dan Geofisika (BMKG) dengan rentang waktu pengamatan tahun 2008 hingga 2026.
+[231] (Normal): Analisis deteksi anomali dilakukan menggunakan empat parameter utama, yaitu magnitudo (magnitude), kedalaman (depth), garis lintang (latitude), dan garis bujur (longitude).
+[232] (Normal): Metode yang digunakan untuk mendeteksi anomali pada data gempa bumi adalah algoritma Isolation Forest sebagai pendekatan unsupervised learning.
+[233] (Normal): Penelitian ini tidak menggunakan proses pelabelan data (ground truth) maupun validasi berdasarkan interpretasi ahli seismologi, sehingga hasil deteksi anomali yang diperoleh digunakan sebagai hasil analisis berbasis model komputasional.
+[234] (Normal): Evaluasi hasil deteksi anomali dilakukan melalui analisis anomaly score, distribusi data, serta visualisasi hasil deteksi untuk memahami karakteristik data yang teridentifikasi sebagai anomali.
+[235] (List Paragraph): Pengembangan sistem dibatasi pada integrasi hasil deteksi anomali ke dalam Aplikasi AMANIN berbasis Android sebagai media penyampaian informasi mitigasi gempa.

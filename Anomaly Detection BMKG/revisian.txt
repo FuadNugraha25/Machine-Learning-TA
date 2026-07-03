@@ -1,0 +1,4 @@
+BAB I - STATUS:
+1. Masalah nyata: ADA (Data masif, anomali sulit dideteksi manual).
+2. Data pendukung: ADA (Saran: tambahkan rincian angka volume data).
+3. Solusi ditawarkan: JELAS (Isolation Forest & Aplikasi AMANIN).

@@ -6,248 +6,82 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tugas Akhir Sistem Informasi — pengembangan fitur Machine Learning untuk aplikasi mobile mitigasi bencana gempa bumi Indonesia, berbasis data USGS 1990–2026. Dikerjakan secara berkelompok.
-
-**Fokus utama adalah Machine Learning (notebook & model), bukan HTML.** HTML hanya alat bantu visualisasi dan tidak boleh jadi prioritas perubahan kecuali diminta eksplisit oleh user.
-
-User ingin implementasi **selengkap dan sedetail mungkin** — tidak ada batasan kesulitan.
+Tugas Akhir Sistem Informasi — pengembangan deteksi anomali seismisitas menggunakan algoritma Machine Learning (Isolation Forest) berbasis data historis BMKG 2008-2026.
 
 ---
 
 ## Identitas Project
 
-- **Judul:** Sistem Mitigasi Gempa Berbasis Android dengan Fitur Deteksi Anomali Seismisitas Menggunakan Pipeline Isolation Forest dan XGBoost
-- **Judul lama (sebelum revisi dosen):** Deteksi Anomali Gempa Bumi Indonesia Menggunakan Kombinasi Isolation Forest dan XGBoost dengan Pendekatan Imputasi Median
-- **Topik:** Mitigasi Bencana
-- **Machine Learning:** XGBoost (dengan Isolation Forest sebagai label generator)
-- **Variable Feature:** Latitude, Longitude, Depth, Gap, Dmin, NST, Bulan, Jam
-- **Variable Target:** Status Anomali Gempa (Normal / Anomali) — label dibuat otomatis oleh Isolation Forest dari 63.413 data historis USGS 1990–2026, contamination 5% mengacu proporsi kejadian ekstrem yang umum di penelitian deteksi anomali seismik
-
-## Pembagian Tugas Kelompok
-
-- **User (pemilik repo ini):** Fokus utama **Anomaly Detection** (Isolation Forest → XGBoost). Klasifikasi tingkat bahaya (XGBoost.ipynb) hanya sebagai pendukung/pembanding.
-- **Anggota lain:** Deteksi anomali menggunakan Isolation Forest murni (file referensi: `earthquake_anomaly_detection_agent_prompt.md`)
+- **Fokus Utama:** Deteksi Anomali Gempa Bumi Indonesia Menggunakan Isolation Forest Murni (Unsupervised).
+- **Machine Learning:** Isolation Forest (XGBoost dan pendekatan klasifikasi/SHAP dibatalkan/tidak dipakai untuk eksperimen ini).
+- **Variable Feature:** `mag`, `depth`, `latitude`, `longitude`.
+- **Variable Target:** Status Anomali Gempa (`0` = Normal, `1` = Anomali) — label dibuat otomatis oleh Isolation Forest dengan nilai *contamination* 0.005 (0.5%).
 
 ---
 
 ## Dataset
 
-- **File aktif:** `data/bmkg/gabungan_2008_2026.csv` — 131.130 baris (Gabungan data BMKG 2008–2026)
-- **File lama (tidak dipakai lagi):** `data/gempa_1990-2026.csv`
-- **Sumber:** BMKG Earthquake Catalog
-- **Sumber:** USGS Earthquake Catalog
-- **Kolom fitur yang dipakai:** `latitude`, `longitude`, `depth`, `gap`, `dmin`, `nst`, `bulan`, `jam`
-- **Kolom bermasalah:** `gap` (15.615 kosong / 24.6%), `dmin` (37.251 kosong / 58.7%), `nst` (30.155 kosong / 47.6%) — nilai kosong karena keterbatasan infrastruktur sensor era 1990-an, bukan data tidak valid
-- **Kolom `mag` dilarang masuk sebagai fitur** — data leakage karena label klasifikasi dibuat dari `mag`
-- **Pendekatan penanganan nilai kosong: Imputasi Median** — terbukti lebih baik dari drop kolom berdasarkan hasil perbandingan
+- **File Aktif:** `data/bmkg/gabungan_2008_2026.csv`
+- **Data Preparation:** 
+  - Filter koordinat *bounding box* Indonesia (Latitude: -11.0 s/d 6.0, Longitude: 95.0 s/d 141.0).
+  - Menghapus semua baris yang memiliki nilai kosong (`dropna()`).
+  - Total data akhir setelah filter dan pembersihan: 131.117 baris.
+- **Standarisasi:** Menggunakan `StandardScaler` sebelum dimasukkan ke model Isolation Forest.
 
 ---
 
-## Fitur ML 1: Klasifikasi Tingkat Bahaya (XGBoost.ipynb)
+## Anomaly Detection (Fokus Saat Ini: Anomaly Detection BMKG/isolation_forest.ipynb)
 
-### Skema Label
-Mengacu paper Earthquake Early Warning (EEW):
-- **Low-magnitude (0):** mag < 5.0
-- **High-magnitude (1):** mag ≥ 5.0
-- Missed alarm lebih berbahaya dari false alarm → bias ke High-magnitude via `scale_pos_weight = (n_low / n_high) * 10`
-- Kelas Noise dari paper tidak diimplementasikan — data USGS sudah terverifikasi gempa
+### Pendekatan
+- Menggunakan **Isolation Forest murni** (unsupervised) untuk mendeteksi anomali dari data historis BMKG.
+- Parameter Isolation Forest: `contamination=0.005`, `random_state=42`.
+- Fitur yang dipakai untuk training: `['mag', 'depth', 'latitude', 'longitude']`. (Fitur `mag` mutlak dimasukkan dalam analisis anomali ini).
+- Label bawaan Isolation Forest (`1` dan `-1`) dikonversi ke format klasifikasi biner standar:
+  - `0` = Normal (awalnya 1)
+  - `1` = Anomali (awalnya -1)
 
-### Fitur Aktif
-```python
-['latitude', 'longitude', 'depth', 'gap', 'dmin', 'nst', 'bulan', 'jam']
-```
-
-### Status
-- ✅ Skema 2 kelas selesai
-- ✅ Imputasi median diterapkan
-- ⏳ Notebook belum diupdate ke data 1990-2026
-- ⏳ Model final belum disimpan ulang ke `model_gempa.pkl`
-- ⏳ `app.py` belum diupdate dengan fitur imputasi median
-
----
-
-## Fitur ML 2: Anomaly Detection (Fokus Baru: Anomaly Detection BMKG/isolation_forest.ipynb)
-
-### Pendekatan Baru (Fokus Saat Ini)
-- Eksperimen baru difokuskan di dalam folder `Anomaly Detection BMKG`.
-- Notebook utama: `isolation_forest.ipynb` (meski namanya sebelumnya mengandung XGB, namun proyek baru ini **tidak akan menggunakan XGBoost**).
-- **Fokus Tunggal:** Hanya menggunakan **Isolation Forest murni** (unsupervised) untuk pelabelan dan deteksi anomali akhir. Tahapan XGBoost **DIBATALKAN/TIDAK DIPAKAI** untuk eksperimen BMKG ini.
-- Pendekatan terhadap definisi dan deteksi anomali disesuaikan murni menggunakan perhitungan statistik, *anomaly score*, dan label langsung dari Isolation Forest berdasarkan data BMKG.
-
-### Pendekatan Lama (Anomaly Detection/XGBoost.ipynb)
-**Isolation Forest → XGBoost** (2 tahap):
-1. Isolation Forest (unsupervised) → generate label anomali/normal dari data
-2. XGBoost (supervised) → belajar dari label tersebut dan jelaskan pola via SHAP
-
-### Alasan Memilih Pendekatan Ini
-- Label dari Isolation Forest lebih objektif daripada label manual
-- XGBoost menambah interpretabilitas (SHAP, feature importance)
-- Kombinasi dua model = kontribusi ilmiah lebih kaya
-
-### Kelemahan yang Harus Diakui di Laporan
-- ~~Tidak ada ground truth~~ — **dosen menyatakan ini tidak masalah** untuk pendekatan unsupervised anomaly detection. Isolation Forest memang dirancang untuk kasus tanpa ground truth.
-- Cascading error — jika Isolation Forest salah memberi label, XGBoost ikut salah
-- Subjektivitas berpindah ke parameter `contamination` Isolation Forest (dipilih 0.05 mengacu proporsi kejadian ekstrem umum di penelitian seismik)
-- Validasi menggunakan distribusi magnitude sebagai proxy (rasio 3.77x mendukung validitas label)
-
-### Target Pengguna
-Bukan masyarakat umum — melainkan **analis BMKG dan peneliti seismologi** yang butuh alat untuk menandai gempa dengan profil tidak lazim untuk investigasi lebih lanjut.
-
-### Fitur Aktif
-```python
-['latitude', 'longitude', 'depth', 'gap', 'dmin', 'nst', 'bulan', 'jam']
-```
-
-### Parameter Isolation Forest
-- Eksperimen dengan `contamination`: 0.01, 0.05, 0.10
-- `n_estimators`: 100, `random_state`: 42
-- Fitur di-scale dulu dengan `StandardScaler` sebelum masuk Isolation Forest
-
-### Output Model
-- `model_anomali.pkl` — model XGBoost anomaly detection
-- `scaler_anomali.pkl` — scaler untuk preprocessing input baru
-
-### Dasar Deteksi Anomali
-Model mendeteksi anomali berdasarkan **kombinasi fitur yang tidak biasa** dibanding pola historis — bukan magnitude secara langsung. Gempa besar belum tentu anomali, namun gempa M≥5 memang 3.77x lebih sering terdeteksi anomali karena cenderung memiliki profil depth/gap/dmin/nst yang tidak lazim. Anomali = gempa yang kombinasi koordinat/depth/gap/dmin/nst-nya tidak umum secara historis.
-
-### Hasil Evaluasi XGBoost (terverifikasi)
-| Metrik | Nilai |
-|---|---|
-| Accuracy (train) | 0.9950 |
-| Accuracy (test) | 0.9860 |
-| Precision | 0.8141 |
-| Recall (Anomali) | 0.9416 |
-| F1 Score | 0.8732 |
-| AUC-ROC | 0.9981 |
-| Best F1 CV (5-fold) | 0.8828 |
-
-**Confusion Matrix (test set):** TN=11.892, FP=140, FN=38, TP=613
-
-### Validasi Distribusi Magnitude (terverifikasi)
-| Rentang Mag | Total | Anomali | % |
-|---|---|---|---|
-| < 3 | 13 | 0 | 0.00% |
-| 3–4 | 6.083 | 219 | 3.60% |
-| 4–5 | 50.897 | 1.888 | 3.71% |
-| 5–6 | 5.896 | 841 | 14.26% |
-| 6–7 | 467 | 209 | 44.75% |
-| ≥7 | 57 | 31 | 54.39% |
-
-- Gempa M≥5: 8.519 gempa → 13.80% anomali
-- Gempa M<5: 54.894 gempa → 3.67% anomali
-- Rasio: **3.77x**
-
-### Hyperparameter Terpilih (RandomizedSearchCV, 40 iter, CV=5)
-```python
-{'n_estimators': 300, 'max_depth': 6, 'learning_rate': 0.1,
- 'subsample': 0.8, 'colsample_bytree': 0.8, 'min_child_weight': 5,
- 'reg_alpha': 0.1, 'reg_lambda': 1, 'scale_pos_weight': ~19.0}
-```
-
-### Catatan Teknis Penting
-- `scaler_anomali.pkl` hanya digunakan untuk Isolation Forest, **BUKAN** untuk input XGBoost
-- SHAP harus dihitung dengan `X_test` (tidak di-scale), bukan `X_test_scaled`
-- Cell validasi magnitude di notebook memiliki bug indexing (gunakan angka terverifikasi di atas)
-
-### Status
-- ✅ Model selesai — model_anomali.pkl, scaler_anomali.pkl tersimpan
-- ✅ Contamination 0.05 dipilih (3.188 anomali dari 63.413 data)
-- ✅ anomali.html selesai (4 tab: Input Manual, Gempa Historis, Dashboard, Timeline)
-- ✅ dashboard.json dan timeline.json di-generate
-- ✅ Kolom mag TIDAK dimasukkan sebagai fitur — keputusan final (data leakage)
-- ✅ SHAP analysis selesai — shap_importance.png, shap_beeswarm.png tersimpan
-- ✅ Validasi distribusi magnitude vs label IF selesai
-- ✅ Definisi operasional anomali sudah dirumuskan
-- ✅ Visualisasi cara kerja IF (simulasi 2D) tersimpan — visualisasi_IF.png
-- ⏳ Revisi judul di dokumen laporan
-- ⏳ Update Bab 2, 3, 4, 5 laporan sesuai panduan_laporan.md
-
----
-
-## Hasil Perbandingan Pendekatan Fitur (perbandingan.ipynb)
-
-Perbandingan Drop Kolom vs Imputasi Median menggunakan XGBoost klasifikasi:
-
-| Metrik | Drop Kolom | Imputasi Median |
-|---|---|---|
-| Accuracy (train) | 0.3510 | 0.6776 |
-| Accuracy (test) | 0.3105 | 0.6635 |
-| Precision | 0.1617 | 0.2948 |
-| Recall High-mag | 0.8991 | 0.9509 |
-| F1 High-mag | 0.2741 | 0.4501 |
-| AUC-ROC | 0.6390 | 0.9105 |
-
-**Kesimpulan: Imputasi Median dipilih** — unggul di semua metrik, terutama AUC-ROC 0.91.
-
-**Best params hasil tuning (berlaku untuk kedua pendekatan):**
-```python
-{'subsample': 1.0, 'n_estimators': 300, 'min_child_weight': 1,
- 'max_depth': 8, 'learning_rate': 0.2, 'colsample_bytree': 0.8}
-```
-
----
-
-## Standar Kualitas ML
-
-- **Hyperparameter Tuning** — wajib RandomizedSearchCV, bukan nilai default
-- **Cross-Validation** — wajib k-fold
-- **Early Stopping** — `early_stopping_rounds=20`, `eval_metric='aucpr'`
-- **Cek Overfitting** — selalu bandingkan score train vs test
-- **Metrik lengkap** — Accuracy, Precision, Recall, F1, AUC-ROC, Confusion Matrix
-- **SHAP** — wajib untuk interpretabilitas, bukan hanya feature importance biasa
-- **Data Leakage** — selalu periksa sebelum training
+### Output Eksperimen
+- Menghasilkan file dataset baru beserta penambahan kolom `anomaly_score` dan `anomaly_label` yang disimpan di: `Anomaly Detection BMKG/dataset_dengan_anomali.csv`.
+- Ekstraksi wawasan melalui analisis korelasi (khusus pada data anomali) dan visualisasi komparatif (boxplot) antara data Normal dan Anomali.
+- Menyimpan model final Isolation Forest dengan nama: `isolation_forest_bmkg.pkl`. *(Catatan: cell yang mencoba menyimpan model XGBoost di notebook tersebut hanyalah sisa boilerplate/error handling, karena XGBoost mutlak tidak dilatih/dipakai).*
 
 ---
 
 ## Aturan Penting
 
-> **PERHATIAN: Aturan-aturan teknis di bawah ini sebagian besar hanya berlaku untuk eksperimen lama (USGS / `Anomaly Detection/XGBoost.ipynb`).** Untuk project baru dengan data BMKG (`Anomaly Detection BMKG/isolation_forest.ipynb`), proses dieksplorasi kembali dari nol (0) sehingga aturan teknis (pemilihan fitur, penanganan data, dll) akan ditentukan seiring berjalannya proyek baru.
-
-- **Gaya Komunikasi Kritis & Edukatif (Berlaku Global):** Selalu jawab pertanyaan konseptual secara komprehensif, logis, dan didukung analogi yang mudah dipahami. Jangan sekadar membenarkan argumen user atau mengikuti perintah secara buta. Jika ada miskonsepsi (misal dari dosen/teori), berikan bantahan/argumen akademis yang solid dan terstruktur.
-- **Jangan confirmation bias (Berlaku Global):** jangan membenarkan pilihan model tanpa bukti perbandingan objektif
-- **Aturan mengedit notebook (.ipynb) (Berlaku Global):** Secara *default*, JANGAN langsung edit file notebook. Cukup jelaskan apa yang perlu diubah dan berikan kode agar user yang memasukkannya sendiri. **PENGECUALIAN:** Anda HANYA diizinkan mengedit file notebook secara langsung jika user yang meminta secara eksplisit.
-- **Urutan perubahan (Project Lama):** notebook → app.py → HTML (jika perlu). Jangan mulai dari HTML
-- **Fitur waktu (Project Lama):** (`bulan`, `jam`) wajib dibuat dari `df` asli sebelum `dropna()` untuk menghindari index mismatch
-- **Kolom `mag` dilarang sebagai fitur (Project Lama):** — data leakage
-- **Setiap ganti skema label (Project Lama):** di notebook wajib diikuti update `app.py`
-- **app.py boleh diedit langsung:** — user mengizinkan perubahan langsung pada app.py
+- **Gaya Komunikasi Kritis & Edukatif:** Selalu jawab pertanyaan konseptual secara komprehensif, logis, dan didukung analogi yang mudah dipahami. Jangan sekadar membenarkan argumen user atau mengikuti perintah secara buta. Jika ada miskonsepsi (misal dari dosen/teori), berikan bantahan/argumen akademis yang solid dan terstruktur.
+- **Jangan confirmation bias:** Jangan membenarkan pilihan model tanpa bukti perbandingan objektif.
+- **Aturan mengedit notebook (.ipynb):** Secara *default*, JANGAN langsung edit file notebook. Cukup jelaskan apa yang perlu diubah dan berikan kode agar user yang memasukkannya sendiri. **PENGECUALIAN:** Anda HANYA diizinkan mengedit file notebook secara langsung jika user yang meminta secara eksplisit.
+- **Kesesuaian Kode:** Semua pengerjaan ML mengenai gempa harus **berpedoman mutlak** pada file `Anomaly Detection BMKG/isolation_forest.ipynb`. Segala aturan atau pendekatan lama (seperti XGBoost, analisis SHAP, larangan pemakaian fitur `mag`, imputasi median, dll) sudah usang dan dibatalkan.
+- **Kesesuaian Template Laporan:** Selalu patuhi standar penulisan (template) laporan atau proposal Tugas Akhir. Gambar/Visualisasi harus diletakkan relevan di tengah teks, dan panjang pembahasan bab (seperti Latar Belakang) harus proporsional untuk standar akademis (tidak boleh terlalu singkat).
+- **Aturan Membaca Laporan:** Jika user meminta Anda melihat/membaca bagian tertentu (contoh: sub-bab 2.2), Anda WAJIB membaca bagian tersebut beserta bagian-bagian SEBELUMNYA (seperti 2.1 atau bahkan Bab 1 sepenuhnya) untuk memastikan pemahaman konteks secara utuh. Anda DILARANG KERAS melihat atau merujuk ke bagian setelahnya (seperti 2.3, Bab 3, dan seterusnya) kecuali diminta secara eksplisit.
 
 ---
 
-## Struktur File
+## Struktur File Utama
 
-```
+```text
 TUGAS AKHIR/
 ├── data/
-│   ├── bmkg/
-│   │   └── gabungan_2008_2026.csv   ← dataset utama BMKG yang baru
-│   ├── gempa_1990-2026.csv          ← dataset lama
-│   └── points.json                  ← untuk heatmap
-├── Anomaly Detection BMKG/          ← FOKUS SAAT INI
-│   └── isolation_forest.ipynb                 ← eksperimen anomaly detection baru
-├── Anomaly Detection/               ← folder lama
-│   ├── XGBoost.ipynb                ← anomaly detection ✅ selesai
-│   ├── XGBoost_solo.ipynb           ← versi latihan mandiri user
-│   ├── shap_importance.png          ← SHAP bar chart ✅
-│   ├── shap_beeswarm.png            ← SHAP beeswarm ✅
-│   └── visualisasi_IF.png           ← simulasi cara kerja IF ✅
-├── XGBoost.ipynb                ← klasifikasi tingkat bahaya
-├── perbandingan.ipynb           ← perbandingan drop kolom vs imputasi
-├── app.py                       ← Flask REST API (port 5000)
-├── model_gempa.pkl              ← model klasifikasi
-├── model_anomali.pkl            ← model anomaly detection ✅
-├── scaler_anomali.pkl           ← scaler anomaly detection ✅
-├── map.html
-├── heatmap.html
-└── prediksi.html
+│   └── bmkg/
+│       └── gabungan_2008_2026.csv        ← dataset historis BMKG
+├── Anomaly Detection BMKG/               ← FOKUS SAAT INI
+│   ├── isolation_forest.ipynb            ← notebook utama eksperimen IF
+│   ├── isolation_forest_bmkg.pkl         ← model final hasil training IF
+│   └── dataset_dengan_anomali.csv        ← output hasil anomali dari IF
+└── CLAUDE.md
 ```
 
 ---
 
-## Instalasi
+## Dokumen Laporan (Word)
 
-```
-pip install pandas numpy matplotlib seaborn xgboost scikit-learn flask joblib shap
-```
+Lokasi file laporan utama yang dapat diedit secara otomatis:
+- `C:\Users\Fuad Nugraha\Documents\Laporan Tugas Akhir\Tugas Akhir Semester 8 AI.docx`
 
-Server prediksi: `python app.py` → buka `http://127.0.0.1:5000/prediksi.html`
+**ATURAN WAJIB MENGEDIT WORD:**
+1. JANGAN PERNAH mengedit file Word tersebut secara lokal di disk (misal: menggunakan `python-docx` atau memanipulasi file zip) karena file ini sering dibiarkan terbuka oleh user, sehingga akan menghasilkan error `Permission Denied`.
+2. SELALU gunakan **COM Automation secara live** (misal: dengan skrip Python via library `win32com.client`). 
+3. Anda harus menulis skrip Python dengan `win32com.client.Dispatch("Word.Application")` dan mencari dokumen yang sedang terbuka di `word.Documents`.
+4. Dengan cara ini, user dapat melihat perubahannya secara langsung secara "live" tanpa perlu menutup aplikasinya.
+5. Skrip Python yang dibuat (misalnya di folder `scratch/`) untuk membaca atau mengedit Word tidak perlu dihapus dan dibiarkan saja sebagai jejak rekam kerja.
