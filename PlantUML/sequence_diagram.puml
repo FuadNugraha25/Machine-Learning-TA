@@ -1,0 +1,88 @@
+@startuml
+title Deployment Diagram Aplikasi AMANIN
+
+skinparam shadowing false
+skinparam dpi 180
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam ArrowColor Black
+skinparam BackgroundColor White
+
+left to right direction
+
+'===============================
+' Client Tier
+'===============================
+
+node "Perangkat Pengguna\n<<device>>" as Client {
+
+    node "Android OS\n<<executionEnvironment>>" as AndroidOS {
+
+        artifact "AMANIN Mobile App\n(.apk)" as APK
+
+    }
+
+}
+
+'===============================
+' Application Tier
+'===============================
+
+node "Server Aplikasi\n<<device>>" as Server {
+
+    node "Uvicorn + FastAPI\n<<executionEnvironment>>" as Runtime {
+
+        component "FastAPI Backend" as Backend
+
+    }
+
+    artifact "Isolation Forest Model\n(isolation_forest_bmkg.pkl)" as Model
+
+    artifact "Scaler Model\n(scaler_isolation_bmkg.pkl)" as Scaler
+
+}
+
+'===============================
+' External Service
+'===============================
+
+node "BMKG Open Data Server\n<<device>>" as BMKG {
+
+    component "BMKG Open Data API" as BMKGAPI
+
+}
+
+'===============================
+' Database
+'===============================
+
+node "Database Server\n<<device>>" as DBServer {
+
+    node "MySQL DBMS\n<<executionEnvironment>>" as MYSQL {
+
+        database "db_amanin" as DB
+
+    }
+
+}
+
+'===============================
+' Communication Path
+'===============================
+
+APK --> Backend : <<HTTPS REST API>>
+
+Backend --> BMKGAPI : GET autogempa.json
+
+Backend --> DB : Read / Write
+
+'===============================
+' Dependency
+'===============================
+
+Backend ..> Model : <<load model>>
+
+Backend ..> Scaler : <<load scaler>>
+
+@enduml
